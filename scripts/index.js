@@ -55,8 +55,8 @@ export function injecterMembresSidebar(membres) {
 
     div.addEventListener("dragstart", (event) => {
       const json = JSON.stringify(memberData);
-      event.dataTransfer.setData("application/json-member", json);
-      console.log("Drag member JSON:", json);
+      event.dataTransfer.setData("text/plain", json);  // Correctement envoyé en tant que texte
+      console.log("Drag member JSON:", json);  // Vérification du JSON
     });
     membersListDiv.appendChild(div);
   });
