@@ -8,8 +8,8 @@ export function initializeDiagram(divId) {
     layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),
     "initialContentAlignment": go.Spot.Center,  // Aligner au centre du canevas
     "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
-    // Crédit GOJS dans le diagramme
-    "textEditor.selectionAlignment": go.Spot.Top,
+    // Supprimer la ligne qui cause l'erreur
+    // "textEditor.selectionAlignment": go.Spot.Top,
     "initialAutoScale": go.Diagram.Uniform, // Ajuste la taille
   });
 
