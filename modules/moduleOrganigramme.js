@@ -72,14 +72,16 @@ export function initializeDiagram(containerId) {
     event.preventDefault();
   });
 
-  container.addEventListener("drop", (event) => {
+  element.addEventListener("drop", (event) => {
     event.preventDefault();
-    const json = event.dataTransfer.getData("text/plain");
-
-    if (!json) {
-      console.error("Aucune donnée reçue pour le drop.");
-      return;
+    try {
+      const jsonData = JSON.parse(event.dataTransfer.getData("application/json"));
+      // utilise jsonData ici (ex : jsonData.name, jsonData.poste, etc.)
+    } catch (error) {
+      console.error("Erreur lors du parsing JSON:", error);
+      alert("Erreur lors du parsing JSON: " + error.message);
     }
+  });
 
     let membreData;
     try {
