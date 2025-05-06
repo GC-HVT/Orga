@@ -9,7 +9,6 @@ import {
     resetDiagram,
     exportDiagram
 } from "../modules/moduleOrganigramme.js";
-import * as go from "gojs"; // Importez la librairie GoJS complète
 
 document.addEventListener("DOMContentLoaded", () => {
     // Initialiser le diagramme avec l'ID de la div
