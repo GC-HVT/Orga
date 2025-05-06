@@ -14,47 +14,45 @@ export function initializeDiagram(divId) {
   });
 
   myDiagram.nodeTemplate =
-    $(go.Node, "Auto",
-      {
-        minSize: new go.Size(120, 80),
-        mouseEnter: (e, node) => node.findObject("SHAPE").fill = "lightyellow",
-        mouseLeave: (e, node) => node.findObject("SHAPE").fill = "lightblue",
-        "_dragover": (e, node) => e.preventDefault(),
-        "_drop": (e, node) => {
-          try {
-            const data = e.diagram.lastInput.dataTransfer;
-            const memberData = JSON.parse(data.getData("application/json-member"));
-            if (!memberData || typeof memberData !== "object") throw new Error("Invalid member data");
+    $(go.Node, "Auto", {
+      minSize: new go.Size(120, 80),
+      mouseEnter: (e, node) => node.findObject("SHAPE").fill = "lightyellow",
+      mouseLeave: (e, node) => node.findObject("SHAPE").fill = "lightblue",
+      "_dragover": (e, node) => e.preventDefault(),
+      "_drop": (e, node) => {
+        try {
+          const memberData = JSON.parse(e.dataTransfer.getData("application/json-member"));
+          if (!memberData || typeof memberData !== "object") throw new Error("Invalid member data");
 
-            myDiagram.model.setDataProperty(node.data, "name", memberData.name);
-            myDiagram.model.setDataProperty(node.data, "poste", memberData.poste);
-            myDiagram.model.setDataProperty(node.data, "tel", memberData.tel);
-            myDiagram.model.setDataProperty(node.data, "mail", memberData.mail);
-          } catch (err) {
-            console.error("Erreur dans le drop sur un node:", err);
-          }
+          myDiagram.model.setDataProperty(node.data, "name", memberData.name);
+          myDiagram.model.setDataProperty(node.data, "poste", memberData.poste);
+          myDiagram.model.setDataProperty(node.data, "tel", memberData.tel);
+          myDiagram.model.setDataProperty(node.data, "mail", memberData.mail);
+        } catch (err) {
+          console.error("Erreur dans le drop sur un node:", err);
         }
-      },
+      }
+    },
 
-      $(go.Shape, "RoundedRectangle", { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
-      $(go.Panel, "Vertical",
-        $(go.TextBlock,
-          { margin: new go.Margin(6, 6, 0, 6), font: "bold 10pt sans-serif", editable: true },
-          new go.Binding("text", "name").makeTwoWay()),
-        $(go.TextBlock,
-          { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
-          new go.Binding("text", "poste").makeTwoWay()),
-        $(go.TextBlock,
-          { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
-          new go.Binding("text", "tel").makeTwoWay()),
-        $(go.TextBlock,
-          { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
-          new go.Binding("text", "mail").makeTwoWay()),
-        $(go.TextBlock,
-          { margin: new go.Margin(0, 6, 6, 6), font: "italic 8pt sans-serif" },
-          new go.Binding("text", "key"))
-      )
-    );
+    $(go.Shape, "RoundedRectangle", { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
+    $(go.Panel, "Vertical",
+      $(go.TextBlock,
+        { margin: new go.Margin(6, 6, 0, 6), font: "bold 10pt sans-serif", editable: true },
+        new go.Binding("text", "name").makeTwoWay()),
+      $(go.TextBlock,
+        { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
+        new go.Binding("text", "poste").makeTwoWay()),
+      $(go.TextBlock,
+        { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
+        new go.Binding("text", "tel").makeTwoWay()),
+      $(go.TextBlock,
+        { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
+        new go.Binding("text", "mail").makeTwoWay()),
+      $(go.TextBlock,
+        { margin: new go.Margin(0, 6, 6, 6), font: "italic 8pt sans-serif" },
+        new go.Binding("text", "key"))
+    )
+  );
 
   myDiagram.linkTemplate =
     $(go.Link, { routing: go.Link.Orthogonal, corner: 5, reshapable: true },
