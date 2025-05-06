@@ -5,7 +5,7 @@ export function initializeDiagram(divId) {
 
   myDiagram = $(go.Diagram, divId, {
     "undoManager.isEnabled": true,
-    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40, isVisible: false }), // Layout désactivé par défaut
+    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }), // Propriété isVisible supprimée
     "initialContentAlignment": go.Spot.Center,
     "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
     "initialAutoScale": go.Diagram.Uniform,
