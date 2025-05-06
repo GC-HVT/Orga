@@ -34,25 +34,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let selectedNodes = [];
 
-    // Fonction pour gérer la sélection des nœuds
-    diagram.addDiagramListener("ObjectSingleClicked", (e) => {
-        const part = e.subject.part;
-        if (part instanceof go.Node) {
-            if (selectedNodes.length < 2 && !selectedNodes.includes(part)) {
-                selectedNodes.push(part);
-                part.isSelected = true; // Indiquer visuellement la sélection
-            } else if (selectedNodes.includes(part)) {
-                selectedNodes = selectedNodes.filter(node => node !== part);
-                part.isSelected = false; // Désélectionner
-            } else {
-                // Limiter à deux sélections, si deux sont déjà sélectionnés, ne rien faire
-                if (selectedNodes.length >= 2) {
-                    return; // Empêcher la sélection d'un troisième nœud
-                }
-                selectedNodes = [part];
-                part.isSelected = true;
-            }
-    });
+    // Fonction pour gérer la sélection des nœuds
+    diagram.addDiagramListener("ObjectSingleClicked", (e) => {
+        const part = e.subject.part;
+        if (part instanceof go.Node) {
+            if (selectedNodes.length < 2 && !selectedNodes.includes(part)) {
+                selectedNodes.push(part);
+                part.isSelected = true; // Indiquer visuellement la sélection
+            } else if (selectedNodes.includes(part)) {
+                selectedNodes = selectedNodes.filter(node => node !== part);
+                part.isSelected = false; // Désélectionner
+            } else {
+                // Limiter à deux sélections, si deux sont déjà sélectionnés, ne rien faire
+                if (selectedNodes.length >= 2) {
+                    return; // Empêcher la sélection d'un troisième nœud
+                }
+                selectedNodes = [part];
+                part.isSelected = true;
+            }
+        }
+    });
 
     // Ajouter un lien entre les nœuds lors du clic sur le bouton "Add Link"
     document.getElementById("addLinkBtn").addEventListener("click", () => {
