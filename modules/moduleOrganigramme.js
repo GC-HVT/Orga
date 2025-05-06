@@ -1,5 +1,3 @@
-import * as go from "https://unpkg.com/gojs/release/go-module.js";
-
 let myDiagram;
 
 export function initializeDiagram(divId) {
