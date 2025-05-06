@@ -14,7 +14,7 @@ body {
   overflow-y: auto;
 }
 
-#diagramContainer {
+.diagramContainer {
   flex: 1;
   position: relative;
 }
