@@ -156,10 +156,6 @@ function drop(e) {
     }
 }
 
-// Initialiser le diagramme lors du chargement du module
-if (!diagram) {
-    initializeDiagram("myDiagramDiv");
-}
 
 // Exportation des fonctions
 export { initializeDiagram, ajouterBloc, addLink, resetDiagram, exportDiagram };
