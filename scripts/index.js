@@ -45,13 +45,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 selectedNodes = selectedNodes.filter(node => node !== part);
                 part.isSelected = false; // Désélectionner
             } else {
-                // Limiter à deux sélections, désélectionner la première et sélectionner la nouvelle
-                if (selectedNodes[0]) selectedNodes[0].isSelected = false;
+                // Limiter à deux sélections, si deux sont déjà sélectionnés, ne rien faire
+                if (selectedNodes.length >= 2) {
+                    return; // Empêcher la sélection d'un troisième nœud
+                }
                 selectedNodes = [part];
                 part.isSelected = true;
             }
-            console.log("Nœuds sélectionnés :", selectedNodes.map(node => node.key));
-        }
     });
 
     // Ajouter un lien entre les nœuds lors du clic sur le bouton "Add Link"
