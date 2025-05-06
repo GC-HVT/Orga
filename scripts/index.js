@@ -1,19 +1,36 @@
 import { chargerGroupes, chargerMembres } from "../modules/moduleMembres.js";
-import { initializeDiagram, addMembersToDiagram } from "../modules/moduleOrganigramme.js";
+import {
+  initializeDiagram,
+  addNode,
+  addLink,
+  resetDiagram,
+  exportDiagram,
+  addMembersToDiagram
+} from "../modules/moduleOrganigramme.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  initializeDiagram();  // appel corrigé
+  initializeDiagram();
+
   chargerGroupes();
 
   const loadBtn = document.getElementById("loadMembersBtn");
-  loadBtn.addEventListener("click", () => {
-    chargerMembres(ajouterMembresDansDiagramme);
-  });
+  if (loadBtn) {
+    loadBtn.addEventListener("click", () => {
+      chargerMembres(ajouterMembresDansDiagramme);
+    });
+  }
 
   const groupSelect = document.getElementById("groupSelect");
-  groupSelect.addEventListener("change", () => {
-    chargerMembres(ajouterMembresDansDiagramme);
-  });
+  if (groupSelect) {
+    groupSelect.addEventListener("change", () => {
+      chargerMembres(ajouterMembresDansDiagramme);
+    });
+  }
+
+  document.getElementById("addNodeBtn")?.addEventListener("click", addNode);
+  document.getElementById("addLinkBtn")?.addEventListener("click", addLink);
+  document.getElementById("resetBtn")?.addEventListener("click", resetDiagram);
+  document.getElementById("exportBtn")?.addEventListener("click", exportDiagram);
 });
 
 function ajouterMembresDansDiagramme(membres) {
