@@ -1,4 +1,3 @@
-// moduleMembres.js
 const flow1Url = "https://510d1700ccf0e18d8838a85b3b1f29.f8.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/22669dcdd1844e2f9f4cb2c33f8b1b29/triggers/manual/paths/invoke/?api-version=1&tenantId=tId&environmentName=510d1700-ccf0-e18d-8838-a85b3b1f29f8&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=yTRYkTzWv_SwRguyhGi705cPWAsXmEoiYFMYvgdeaqM";
 const flow2Url = "https://510d1700ccf0e18d8838a85b3b1f29.f8.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3785e3f025114a9e91f473a5eea86efb/triggers/manual/paths/invoke/?api-version=1&tenantId=tId&environmentName=510d1700-ccf0-e18d-8838-a85b3b1f29f8&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ThRN4vDSsDK-KmzKm5FWhgVJoWma_WZpL_FvexTj3Pc";
 
@@ -37,7 +36,7 @@ function remplirSelectGroupes(groupes) {
 }
 
 // Fonction pour charger les membres d'un groupe
-async function chargerMembres(callback) {
+async function chargerMembres() {
   const groupId = document.getElementById("groupSelect").value;
   if (!groupId) {
     alert("Veuillez choisir un groupe.");
@@ -52,13 +51,7 @@ async function chargerMembres(callback) {
     });
 
     const data = await response.json();
-    const membres = data.members || [];
-
-    afficherMembres(membres);
-
-    if (typeof callback === "function") {
-      callback(membres);
-    }
+    afficherMembres(data.members || []);
   } catch (error) {
     alert("Erreur lors du chargement des membres : " + error.message);
   }
