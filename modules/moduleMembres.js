@@ -68,9 +68,16 @@ function afficherMembres(membres) {
     div.textContent = member.displayName;
     div.dataset.id = member.id;
 
+    // Créer un objet JSON structuré à transmettre lors du drag
     div.addEventListener("dragstart", (event) => {
-      event.dataTransfer.setData("text/plain", member.displayName);
-      event.dataTransfer.setData("memberId", member.id);
+      const memberData = {
+        key: member.id,
+        name: member.displayName || "",
+        poste: member.jobTitle || "",
+        tel: member.telephoneNumber || "",
+        mail: member.mail || ""
+      };
+      event.dataTransfer.setData("text/plain", JSON.stringify(memberData));
     });
 
     membersList.appendChild(div);
