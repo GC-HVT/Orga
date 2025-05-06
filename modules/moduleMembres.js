@@ -64,29 +64,29 @@ async function chargerMembres(callback) {
 }
 
 // Afficher les membres dans le DOM (cette fonction est maintenant dans index.js sous le nom injecterMembresSidebar)
-function afficherMembres(membres) {
-     const membersList = document.getElementById("membersList");
-     membersList.innerHTML = "";
-     membres.forEach(member => {
-         const div = document.createElement("div");
-         div.className = "member-card";
-         div.draggable = true;
-         div.textContent = member.displayName;
-         div.dataset.id = member.id;
+// function afficherMembres(membres) {
+//     const membersList = document.getElementById("membersList");
+//     membersList.innerHTML = "";
+//     membres.forEach(member => {
+//         const div = document.createElement("div");
+//         div.className = "member-card";
+//         div.draggable = true;
+//         div.textContent = member.displayName;
+//         div.dataset.id = member.id;
 
-         div.addEventListener("dragstart", (event) => {
-             const memberData = {
-                 key: member.id,
-                 name: member.displayName || "",
-                 poste: member.jobTitle || "",
-                 tel: member.telephoneNumber || "",
-                 mail: member.mail || ""
-             };
-             event.dataTransfer.setData("application/json", JSON.stringify(memberData));
-         });
+//         div.addEventListener("dragstart", (event) => {
+//             const memberData = {
+//                 key: member.id,
+//                 name: member.displayName || "",
+//                 poste: member.jobTitle || "",
+//                 tel: member.telephoneNumber || "",
+//                 mail: member.mail || ""
+//             };
+//             event.dataTransfer.setData("application/json", JSON.stringify(memberData));
+//         });
 
-         membersList.appendChild(div);
-     });
- }
+//         membersList.appendChild(div);
+//     });
+// }
 
 export { chargerGroupes, chargerMembres };
