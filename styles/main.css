@@ -3,7 +3,7 @@ html, body {
   padding: 0;
   height: 100%;
   font-family: Arial, sans-serif;
-  display: flex;
+  display: flex; /* Container flexible principal */
 }
 
 #sidebar {
@@ -11,8 +11,8 @@ html, body {
   padding: 20px;
   background-color: #f3f3f3;
   border-right: 1px solid #ddd;
-  display: flex;
-  flex-direction: column;
+  display: flex; /* Sidebar en tant que conteneur flexible pour ses éléments */
+  flex-direction: column; /* Organisation verticale des éléments de la sidebar */
 }
 
 #controls button {
@@ -21,12 +21,20 @@ html, body {
 
 #groupSelectContainer {
   margin-top: 20px;
+  display: flex;
+  flex-direction: column; /* Label au-dessus du select */
+}
+
+#groupSelect {
+  width: 250px; /* Largeur fixe souhaitée pour la liste déroulante */
+  /* overflow: hidden; /* Optionnel: pour cacher le texte qui dépasse */
+  /* text-overflow: ellipsis; /* Optionnel: pour afficher des points de suspension */
 }
 
 #membersListContainer {
   margin-top: 20px;
-  flex: 1;
-  overflow-y: auto;
+  flex: 1; /* Prend l'espace restant dans la sidebar */
+  overflow-y: auto; /* Permet le défilement si la liste est longue */
 }
 
 #membersList div {
@@ -42,9 +50,9 @@ html, body {
 }
 
 #myDiagramDiv {
-  flex: 1;
+  flex: 1; /* Prend tout l'espace disponible à droite de la sidebar */
   background-color: #ffffff;
-  min-height: 600px;
+  min-height: 600px; /* Assure une hauteur minimale */
   border: 1px solid #000;
-  position: relative;
+  position: relative; /* Important pour le positionnement des éléments GoJS */
 }
