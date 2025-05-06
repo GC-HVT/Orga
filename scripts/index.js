@@ -1,8 +1,8 @@
 import { chargerGroupes, chargerMembres } from "../modules/moduleMembres.js";
-import { initDiagram, addMembersToDiagram } from "../modules/moduleOrganigramme.js";
+import { initializeDiagram, addMembersToDiagram } from "../modules/moduleOrganigramme.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  initDiagram("myDiagramDiv");
+  initializeDiagram();  // appel corrigé
   chargerGroupes();
 
   const loadBtn = document.getElementById("loadMembersBtn");
@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     chargerMembres(ajouterMembresDansDiagramme);
   });
 
-  // Écouteur pour charger la liste des groupes dans la sidebar
   const groupSelect = document.getElementById("groupSelect");
   groupSelect.addEventListener("change", () => {
     chargerMembres(ajouterMembresDansDiagramme);
