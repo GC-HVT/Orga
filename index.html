@@ -1,17 +1,28 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Organigramme Fonctionnel</title>
-  <script src="https://unpkg.com/gojs/release/go.js"></script>
+  
+  <!-- Importation de GoJS -->
+  <script src="https://unpkg.com/gojs@3.0.21/release/go.mjs" type="module"></script>
+
+  <!-- Importation de jQuery (si tu choisis de l'utiliser) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Script pour ton application -->
   <script type="module" src="./scripts/index.js"></script>
+
+  <!-- Feuille de style -->
   <link rel="stylesheet" href="./styles/main.css">
 </head>
+
 <body>
   <div id="sidebar">
     <h2>Groupes</h2>
-    <select id="groupSelect">
+    <label for="groupSelect">Sélectionner un groupe :</label>
+    <select id="groupSelect" name="groupSelect">
       <option value="">-- Sélectionner un groupe --</option>
     </select>
     <button id="loadMembersBtn">Charger les membres</button>
@@ -21,7 +32,10 @@
   </div>
 
   <div id="diagramContainer">
-    <div id="myDiagramDiv"></div>
+    <div id="myDiagramDiv" style="position: relative;">
+      <canvas tabindex="0" width="502" height="750"></canvas>
+    </div>
   </div>
+
 </body>
 </html>
