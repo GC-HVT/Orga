@@ -11,7 +11,6 @@ export function initializeDiagram(divId) {
     "hasVerticalScrollbar": true,
     "linkingTool.isEnabled": true,
     "relinkingTool.isEnabled": true,
-    "deletable": true // Correct
   });
 
   myDiagram.nodeTemplate =
