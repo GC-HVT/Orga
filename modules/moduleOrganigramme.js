@@ -1,141 +1,116 @@
+const $ = go.GraphObject.make;
+
 let diagram;
 
-export function initializeDiagram(containerId) {
-  const $ = go.GraphObject.make;
-
-  diagram = $(go.Diagram, containerId, {
-    initialContentAlignment: go.Spot.Center,
+function initDiagram() {
+  diagram = $(go.Diagram, "myDiagramDiv", {
     "undoManager.isEnabled": true,
     allowDrop: true,
-    "draggingTool.dragsLink": true,
-    "linkingTool.direction": go.LinkingTool.ForwardsOnly
+    "draggingTool.isGridSnapEnabled": true,
+    "resizingTool.isGridSnapEnabled": true,
+    "rotatingTool.snapAngleMultiple": 90,
+    "rotatingTool.snapAngleEpsilon": 45,
+    layout: $(go.TreeLayout, {
+      angle: 90,
+      layerSpacing: 35
+    })
   });
 
-  diagram.nodeTemplate =
-    $(go.Node, "Auto",
+  diagram.nodeTemplate = $(
+    go.Node,
+    "Auto",
+    { locationSpot: go.Spot.Center },
+    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+    $(
+      go.Shape,
+      "RoundedRectangle",
       {
-        selectionAdorned: true,
-        deletable: true
+        fill: "#ACE600",
+        stroke: null
       },
-      $(go.Shape, "RoundedRectangle", {
-        fill: "lightblue",
-        stroke: "gray",
-        strokeWidth: 1
-      }),
-      $(go.Panel, "Table",
-        { padding: 6 },
-        $(go.RowColumnDefinition, { column: 1, width: 4 }),
-        $(go.TextBlock,
-          {
-            row: 0, columnSpan: 2,
-            font: "bold 14px sans-serif",
-            stroke: "#333"
-          },
-          new go.Binding("text", "name")
-        ),
-        $(go.TextBlock,
-          {
-            row: 1, column: 0,
-            stroke: "#555",
-            font: "12px sans-serif"
-          },
-          new go.Binding("text", "poste")
-        ),
-        $(go.TextBlock,
-          {
-            row: 2, column: 0,
-            stroke: "#555",
-            font: "12px sans-serif"
-          },
-          new go.Binding("text", "tel")
-        ),
-        $(go.TextBlock,
-          {
-            row: 3, column: 0,
-            stroke: "#555",
-            font: "12px sans-serif"
-          },
-          new go.Binding("text", "mail")
-        )
+      new go.Binding("fill", "color")
+    ),
+    $(
+      go.Panel,
+      "Table",
+      { margin: 6, maxSize: new go.Size(200, NaN) },
+      $(
+        go.TextBlock,
+        {
+          row: 0,
+          font: "bold 14px sans-serif",
+          stroke: "#333",
+          maxSize: new go.Size(200, NaN),
+          wrap: go.TextBlock.WrapFit
+        },
+        new go.Binding("text", "name")
+      ),
+      $(
+        go.TextBlock,
+        {
+          row: 1,
+          margin: new go.Margin(4, 0, 0, 0),
+          maxSize: new go.Size(200, NaN),
+          wrap: go.TextBlock.WrapFit
+        },
+        new go.Binding("text", "poste")
+      ),
+      $(
+        go.TextBlock,
+        {
+          row: 2,
+          margin: new go.Margin(4, 0, 0, 0),
+          maxSize: new go.Size(200, NaN),
+          wrap: go.TextBlock.WrapFit
+        },
+        new go.Binding("text", "tel")
+      ),
+      $(
+        go.TextBlock,
+        {
+          row: 3,
+          margin: new go.Margin(4, 0, 0, 0),
+          maxSize: new go.Size(200, NaN),
+          wrap: go.TextBlock.WrapFit
+        },
+        new go.Binding("text", "mail")
       )
-    );
+    )
+  );
 
-  diagram.linkTemplate =
-    $(go.Link,
-      { relinkableFrom: true, relinkableTo: true },
-      $(go.Shape),
-      $(go.Shape, { toArrow: "Standard" })
-    );
+  diagram.model = new go.GraphLinksModel([], []);
+}
 
-  const container = document.getElementById(containerId);
-  container.addEventListener("dragover", (event) => {
-    event.preventDefault();
-  });
+// Fonction pour ajouter un nœud
+function ajouterBloc(data) {
+  diagram.model.addNodeData(data);
+}
 
-  element.addEventListener("drop", (event) => {
-    event.preventDefault();
-    try {
-      const jsonData = JSON.parse(event.dataTransfer.getData("application/json"));
-      // utilise jsonData ici (ex : jsonData.name, jsonData.poste, etc.)
-    } catch (error) {
-      console.error("Erreur lors du parsing JSON:", error);
-      alert("Erreur lors du parsing JSON: " + error.message);
-    }
-  });
+// Gestion du drop depuis la sidebar
+const diagramDiv = document.getElementById("myDiagramDiv");
 
-    let membreData;
-    try {
-      membreData = JSON.parse(json);
-    } catch (error) {
-      console.error("Erreur lors du parsing JSON:", error);
-      return;
-    }
+diagramDiv.addEventListener("dragover", (event) => {
+  event.preventDefault();
+});
 
-    const point = diagram.lastInput.documentPoint;
-    diagram.model.addNodeData({
-      key: membreData.key,
-      name: membreData.name,
-      poste: membreData.poste,
-      tel: membreData.tel,
-      mail: membreData.mail,
+diagramDiv.addEventListener("drop", (event) => {
+  event.preventDefault();
+  const point = diagram.lastInput.documentPoint;
+
+  try {
+    const jsonData = JSON.parse(event.dataTransfer.getData("application/json"));
+    ajouterBloc({
+      key: jsonData.key,
+      name: jsonData.name,
+      poste: jsonData.poste,
+      tel: jsonData.tel,
+      mail: jsonData.mail,
       loc: go.Point.stringify(point)
     });
-  });
-}
-
-export function addNode() {
-  diagram.model.addNodeData({
-    key: "nouveau",
-    name: "Nouveau",
-    poste: "Poste",
-    tel: "",
-    mail: ""
-  });
-}
-
-export function addLink() {
-  const sel = diagram.selection.toArray();
-  if (sel.length === 2) {
-    diagram.model.addLinkData({
-      from: sel[0].data.key,
-      to: sel[1].data.key
-    });
-  } else {
-    alert("Sélectionnez exactement deux blocs pour créer un lien.");
+  } catch (error) {
+    console.error("Erreur lors du parsing JSON:", error);
+    alert("Erreur lors du parsing JSON: " + error.message);
   }
-}
+});
 
-export function resetDiagram() {
-  diagram.clear();
-}
-
-export function exportDiagram() {
-  const svg = diagram.makeSvg({ scale: 1, background: "white" });
-  const blob = new Blob([svg.outerHTML], { type: "image/svg+xml;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "organigramme.svg";
-  a.click();
-  URL.revokeObjectURL(url);
-}
+export { initDiagram, ajouterBloc };
