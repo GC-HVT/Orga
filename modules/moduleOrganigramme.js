@@ -1,4 +1,4 @@
-import * as go from "gojs";
+import go from 'https://unpkg.com/gojs/release/go.js';
 
 let myDiagram;
 
