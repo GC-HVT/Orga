@@ -1,6 +1,6 @@
 // index.js
-import { chargerGroupes, chargerMembres } from "./modules/moduleMembres.js";
-import { initDiagram, addMembersToDiagram } from "./modules/moduleOrganigramme.js";
+import { chargerGroupes, chargerMembres } from "../modules/moduleMembres.js";
+import { initDiagram, addMembersToDiagram } from "../modules/moduleOrganigramme.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initDiagram("myDiagramDiv");
