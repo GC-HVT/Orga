@@ -1,0 +1,27 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Organigramme Fonctionnel</title>
+  <script src="https://unpkg.com/gojs/release/go.js"></script>
+  <script type="module" src="./scripts/index.js"></script>
+  <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+  <div id="sidebar">
+    <h2>Groupes</h2>
+    <select id="groupSelect">
+      <option value="">-- Sélectionner un groupe --</option>
+    </select>
+    <button id="loadMembersBtn">Charger les membres</button>
+
+    <h2>Membres</h2>
+    <div id="membersList"></div>
+  </div>
+
+  <div id="diagramContainer">
+    <div id="myDiagramDiv"></div>
+  </div>
+</body>
+</html>
