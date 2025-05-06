@@ -11,12 +11,13 @@ export function initializeDiagram(divId) {
     "hasVerticalScrollbar": true,
     "linkingTool.isEnabled": true,
     "relinkingTool.isEnabled": true,
+    // "deletable": true // Supprimé car potentiellement source d'erreur et comportement par défaut
   });
 
   myDiagram.nodeTemplate =
     $(go.Node, "Auto",
       {
-        minSize: new go.Size(120, 60), // Taille minimale pour afficher plus d'informations
+        minSize: new go.Size(120, 80), // Augmenter la taille pour afficher l'ID
         mouseEnter: (e, node) => node.findObject("SHAPE").fill = "lightyellow",
         mouseLeave: (e, node) => node.findObject("SHAPE").fill = "lightblue",
         "_dragover": (e, node) => {
@@ -43,8 +44,11 @@ export function initializeDiagram(divId) {
           { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
           new go.Binding("text", "tel").makeTwoWay()),
         $(go.TextBlock,
-          { margin: new go.Margin(0, 6, 6, 6), font: "9pt sans-serif", editable: true },
-          new go.Binding("text", "mail").makeTwoWay())
+          { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
+          new go.Binding("text", "mail").makeTwoWay()),
+        $(go.TextBlock, // Ajout pour afficher l'ID
+          { margin: new go.Margin(0, 6, 6, 6), font: "italic 8pt sans-serif" },
+          new go.Binding("text", "key"))
       )
     );
 
