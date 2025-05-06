@@ -149,7 +149,7 @@ function drop(e) {
         console.error("Erreur lors de la récupération des données du drop :", error);
         return;
     }
-    if (data && diagram) {
+    if (data && diagram) { // Utilisation explicite de la variable globale 'diagram'
         try {
             const point = diagram.transformViewToModel(diagram.lastInput.documentPoint);
             ajouterBloc({ ...data, loc: go.Point.stringify(point) });
