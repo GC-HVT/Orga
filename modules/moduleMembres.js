@@ -69,16 +69,16 @@ function afficherMembres(membres) {
     div.dataset.id = member.id;
 
     // Créer un objet JSON structuré à transmettre lors du drag
-    div.addEventListener("dragstart", (event) => {
-      const memberData = {
-        key: member.id,
-        name: member.displayName || "",
-        poste: member.jobTitle || "",
-        tel: member.telephoneNumber || "",
-        mail: member.mail || ""
-      };
-      event.dataTransfer.setData("text/plain", JSON.stringify(memberData));
-    });
+  div.addEventListener("dragstart", (event) => {
+    const memberData = {
+      key: member.id,
+      name: member.displayName || "",
+      poste: member.jobTitle || "",
+      tel: member.telephoneNumber || "",
+      mail: member.mail || ""
+    };
+    event.dataTransfer.setData("application/json", JSON.stringify(memberData));
+  });
 
     membersList.appendChild(div);
   });
