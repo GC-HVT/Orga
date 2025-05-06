@@ -1,4 +1,5 @@
 const $ = go.GraphObject.make;
+
 let diagram;
 
 function initializeDiagram(divId) {
@@ -72,12 +73,14 @@ function initializeDiagram(divId) {
     );
 
     diagram.model = new go.GraphLinksModel([], []);
+
+    return diagram;
 }
 
 function ajouterBloc(data) {
     const position = new go.Point(0, 0);
     const nodeData = {
-        key: data ? data.key : Date.now(),
+        key: data ? data.userId : Date.now(),
         name: data ? data.name : "Nouveau Bloc",
         poste: data ? data.poste : "",
         tel: data ? data.tel : "",
@@ -87,10 +90,10 @@ function ajouterBloc(data) {
     diagram.model.addNodeData(nodeData);
 }
 
-function addLink(fromNode, toNode) {
+function addLink(fromNodeData, toNodeData) {
     diagram.model.addLinkData({
-        from: fromNode.key,
-        to: toNode.key
+        from: fromNodeData.key,
+        to: toNodeData.key
     });
 }
 
@@ -152,10 +155,12 @@ function drop(e) {
             ajouterBloc({ ...data, loc: go.Point.stringify(point) });
         } catch (error) {
             console.error("Erreur lors de la transformation des coordonnées du drop :", error);
+            console.error("Instance de diagramme :", diagram);
         }
+    } else {
+        console.warn("L'instance de diagramme n'est pas disponible lors du drop.");
     }
 }
-
 
 // Exportation des fonctions
 export { initializeDiagram, ajouterBloc, addLink, resetDiagram, exportDiagram };
