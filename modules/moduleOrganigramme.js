@@ -154,7 +154,7 @@ function drop(e) {
 
 // Initialiser le diagramme lors du chargement du module
 if (!diagram) {
-    initDiagram("myDiagramDiv");
+    initializeDiagram("myDiagramDiv"); // Correction ici : initDiagram remplacé par initializeDiagram
 }
 
 // Exportation des fonctions
