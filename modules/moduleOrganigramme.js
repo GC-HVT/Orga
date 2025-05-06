@@ -1,19 +1,17 @@
-import * as go from 'https://unpkg.com/gojs/release/go.js';
-
 let myDiagram;
 
 export function initializeDiagram(divId) {
-  const $ = go.GraphObject.make;
+  const $ = go.GraphObject.make;  // GoJS est accessible globalement
 
   // Initialisation du diagramme
   myDiagram = $(go.Diagram, divId, {
-    "undoManager.isEnabled": true,  // Permet l'annulation et la réouverture des actions
-    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),  // Configuration de l'agencement
-    "initialContentAlignment": go.Spot.Center,  // Centrage du diagramme
-    "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,  // Permet le zoom avec la molette de la souris
-    "initialAutoScale": go.Diagram.Uniform,  // Mise à l'échelle automatique
-    "hasHorizontalScrollbar": false,  // Désactive la barre de défilement horizontale
-    "hasVerticalScrollbar": false,  // Désactive la barre de défilement verticale
+    "undoManager.isEnabled": true,
+    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),
+    "initialContentAlignment": go.Spot.Center,
+    "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
+    "initialAutoScale": go.Diagram.Uniform,
+    "hasHorizontalScrollbar": false,
+    "hasVerticalScrollbar": false,
   });
 
   // Définition du modèle de noeud
@@ -30,23 +28,24 @@ export function initializeDiagram(divId) {
       $(go.Shape, { toArrow: "Standard" })
     );
 
-  // Vérification et chargement des données sauvegardées
+  // Chargement des données sauvegardées ou modèle vide
   const savedDiagram = localStorage.getItem("orgDiagramData");
   if (savedDiagram) {
     const savedModel = JSON.parse(savedDiagram);
+    console.log(savedModel);  // Vérifie que le modèle est bien chargé
     myDiagram.model = go.Model.fromJson(savedModel);
   } else {
-    myDiagram.model = new go.GraphLinksModel([], []);  // Création d'un modèle vide si aucune donnée
+    myDiagram.model = new go.GraphLinksModel([], []);
   }
 
-  // Sauvegarde des modifications dans localStorage
+  // Sauvegarde du modèle dans localStorage
   myDiagram.addModelChangedListener((evt) => {
     if (evt.isTransactionFinished) {
       const json = myDiagram.model.toJson();
       localStorage.setItem("orgDiagramData", json);
     }
   });
-
+  
   const div = document.getElementById(divId);
   div.addEventListener("dragover", (e) => e.preventDefault());
   div.addEventListener("drop", (e) => {
