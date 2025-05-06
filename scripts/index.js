@@ -51,6 +51,7 @@ export function injecterMembresSidebar(membres) {
         tel: membre.telephoneNumber,
         mail: membre.mail
       }));
+      console.log(membre);
       event.dataTransfer.setData("memberId", membre.userId);
     });
 
