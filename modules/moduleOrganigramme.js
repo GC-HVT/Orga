@@ -11,7 +11,7 @@ export function initializeDiagram(divId) {
     "hasVerticalScrollbar": true,
     "linkingTool.isEnabled": true,
     "relinkingTool.isEnabled": true,
-    "commandHandler.deletable": true // Activer la suppression avec la touche Suppr
+    "deletable": true // Correct
   });
 
   myDiagram.nodeTemplate =
