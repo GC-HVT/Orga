@@ -3,39 +3,34 @@ let myDiagram;
 export function initializeDiagram(divId) {
   const $ = go.GraphObject.make;
 
-  // Initialisation du diagramme
   myDiagram = $(go.Diagram, divId, {
     "undoManager.isEnabled": true,
     layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),
-    "initialContentAlignment": go.Spot.Center,  // Alignement initial au centre
-    "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,  // Permet de zoomer avec la molette
-    "initialAutoScale": go.Diagram.Uniform, // Ajuste automatiquement le diagramme pour s'adapter à l'écran
+    "initialContentAlignment": go.Spot.Center,
+    "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
+    "initialAutoScale": go.Diagram.Uniform,
   });
 
-  // Template pour les nœuds
   myDiagram.nodeTemplate =
     $(go.Node, "Auto",
       $(go.Shape, "RoundedRectangle", { fill: "lightblue", strokeWidth: 0 }),
       $(go.TextBlock, { margin: 8, editable: true }, new go.Binding("text", "name").makeTwoWay())
     );
 
-  // Template pour les liens
   myDiagram.linkTemplate =
     $(go.Link, { routing: go.Link.Orthogonal, corner: 5 },
       $(go.Shape),
       $(go.Shape, { toArrow: "Standard" })
     );
 
-  // Chargement du diagramme depuis le localStorage si disponible
   const savedDiagram = localStorage.getItem("orgDiagramData");
   if (savedDiagram) {
     const savedModel = JSON.parse(savedDiagram);
     myDiagram.model = go.Model.fromJson(savedModel);
   } else {
-    myDiagram.model = new go.GraphLinksModel([], []); // Modèle vide par défaut
+    myDiagram.model = new go.GraphLinksModel([], []);
   }
 
-  // Sauvegarde automatique dans le localStorage
   myDiagram.addModelChangedListener((evt) => {
     if (evt.isTransactionFinished) {
       const json = myDiagram.model.toJson();
@@ -43,7 +38,6 @@ export function initializeDiagram(divId) {
     }
   });
 
-  // Ajout du support drag-and-drop pour les membres du diagramme
   const div = document.getElementById(divId);
   div.addEventListener("dragover", (e) => e.preventDefault());
   div.addEventListener("drop", (e) => {
@@ -51,6 +45,17 @@ export function initializeDiagram(divId) {
     const data = JSON.parse(e.dataTransfer.getData("text/plain"));
     const point = myDiagram.lastInput.documentPoint;
     myDiagram.model.addNodeData({ ...data, color: "lightblue", loc: go.Point.stringify(point) });
+  });
+}
+
+// Nouvelle fonction pour ajouter les membres au diagramme
+export function addMembersToDiagram(membres) {
+  membres.forEach((membre) => {
+    myDiagram.model.addNodeData({
+      key: membre.id,
+      name: membre.displayName || "Nom inconnu",
+      color: "lightgreen",  // Définir une couleur différente pour les membres
+    });
   });
 }
 
