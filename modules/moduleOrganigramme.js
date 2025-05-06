@@ -46,14 +46,6 @@ export function initializeDiagram(divId) {
       localStorage.setItem("orgDiagramData", json);
     }
   });
-}
-
-  myDiagram.addModelChangedListener((evt) => {
-    if (evt.isTransactionFinished) {
-      const json = myDiagram.model.toJson();
-      localStorage.setItem("orgDiagramData", json);
-    }
-  });
 
   const div = document.getElementById(divId);
   div.addEventListener("dragover", (e) => e.preventDefault());
