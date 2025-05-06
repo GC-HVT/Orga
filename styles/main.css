@@ -1,42 +1,48 @@
-/* main.css */
-body {
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
   font-family: Arial, sans-serif;
   display: flex;
-  margin: 0;
-  height: 100vh;
 }
 
 #sidebar {
   width: 300px;
-  border-right: 1px solid #ccc;
-  padding: 1rem;
-  background-color: #f5f5f5;
+  padding: 20px;
+  background-color: #f3f3f3;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+#controls button {
+  margin-bottom: 10px;
+}
+
+#groupSelectContainer {
+  margin-top: 20px;
+}
+
+#membersListContainer {
+  margin-top: 20px;
+  flex: 1;
   overflow-y: auto;
 }
 
-#diagramContainer {
-  flex: 1;
-  position: relative;
+#membersList div {
+  padding: 10px;
+  margin-bottom: 5px;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+#membersList div:hover {
+  background-color: #ccc;
 }
 
 #myDiagramDiv {
-  width: 100%;
-  height: 600px;
-}
-
-select, button {
-  width: 100%;
-  padding: 0.5rem;
-  font-size: 14px;
-  margin-top: 1rem;
-}
-
-.member-card {
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  background-color: white;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  cursor: grab;
-  font-size: 14px;
+  flex: 1;
+  background-color: #ffffff;
+  min-height: 100vh;
 }
