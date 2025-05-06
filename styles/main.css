@@ -45,4 +45,5 @@ html, body {
   flex: 1;
   background-color: #ffffff;
   min-height: 100vh;
+  position: relative;
 }
