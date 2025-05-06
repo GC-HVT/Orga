@@ -1,33 +1,3 @@
-import {
-  chargerGroupes,
-  chargerMembres
-} from "../modules/moduleMembres.js";
-import {
-  initializeDiagram,
-  addNode,
-  addLink,
-  resetDiagram,
-  exportDiagram
-} from "../modules/moduleOrganigramme.js";
-
-document.addEventListener("DOMContentLoaded", () => {
-  initializeDiagram("myDiagramDiv");
-  chargerGroupes();
-
-  document.getElementById("loadMembersBtn").addEventListener("click", () => {
-    chargerMembres(injecterMembresSidebar);
-  });
-
-  document.getElementById("groupSelect").addEventListener("change", () => {
-    chargerMembres(injecterMembresSidebar);
-  });
-
-  document.getElementById("addNodeBtn").addEventListener("click", () => addNode());
-  document.getElementById("addLinkBtn").addEventListener("click", () => addLink());
-  document.getElementById("resetBtn").addEventListener("click", () => resetDiagram());
-  document.getElementById("exportBtn").addEventListener("click", () => exportDiagram());
-});
-
 export function injecterMembresSidebar(membres) {
   const membersListDiv = document.getElementById("membersList");
   membersListDiv.innerHTML = ""; // Effacer la liste précédente
@@ -37,22 +7,27 @@ export function injecterMembresSidebar(membres) {
     div.classList.add("member-card");
     div.textContent = membre.displayName;
     div.draggable = true;
-    div.dataset.id = membre.userId || index.toString(); // Utiliser userId si disponible
-    div.dataset.nom = membre.displayName;
-    div.dataset.poste = membre.jobTitle;
-    div.dataset.tel = membre.telephoneNumber;
-    div.dataset.mail = membre.mail;
+
+    const memberData = {
+      key: membre.userId || `user-${index}`,
+      name: membre.displayName || "",
+      poste: membre.jobTitle || "",
+      tel: membre.telephoneNumber || "",
+      mail: membre.mail || ""
+    };
+
+    // Stocker les infos dans les data-* pour du debug ou autre usage
+    div.dataset.id = memberData.key;
+    div.dataset.nom = memberData.name;
+    div.dataset.poste = memberData.poste;
+    div.dataset.tel = memberData.tel;
+    div.dataset.mail = memberData.mail;
 
     div.addEventListener("dragstart", (event) => {
-      event.dataTransfer.setData("text/plain", JSON.stringify({
-        key: membre.userId,
-        name: membre.displayName,
-        poste: membre.jobTitle,
-        tel: membre.telephoneNumber,
-        mail: membre.mail
-      }));
-      console.log(membre);
-      event.dataTransfer.setData("memberId", membre.userId);
+      event.dataTransfer.setData("text/plain", JSON.stringify(memberData));
+      // Optionnel : ligne ci-dessous inutile si non utilisée dans le drop
+      event.dataTransfer.setData("memberId", memberData.key);
+      console.log("Drag member:", memberData);
     });
 
     membersListDiv.appendChild(div);
