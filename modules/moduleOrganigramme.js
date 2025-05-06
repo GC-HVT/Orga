@@ -13,27 +13,27 @@ export function initializeDiagram(divId) {
     "relinkingTool.isEnabled": true,
   });
 
-  myDiagram.nodeTemplate =
-    $(go.Node, "Auto",
-      {
-        minSize: new go.Size(80, 40), // Taille minimale pour les nœuds
-        mouseEnter: (e, node) => node.findObject("SHAPE").fill = "lightyellow",
-        mouseLeave: (e, node) => node.findObject("SHAPE").fill = "lightblue",
-        "dragover": (e, node) => {
-          e.preventDefault(); // Autoriser le drop sur les nœuds
-        },
-        "drop": (e, node) => {
-          const memberData = JSON.parse(e.dataTransfer.getData("text/plain"));
-          myDiagram.model.setDataProperty(node.data, "name", memberData.name); // Mettre à jour le nom du nœud
-          // Ici, tu pourrais également mettre à jour d'autres propriétés du nœud avec les données du membre
-        }
+myDiagram.nodeTemplate =
+  $(go.Node, "Auto",
+    {
+      minSize: new go.Size(80, 40),
+      mouseEnter: (e, node) => node.findObject("SHAPE").fill = "lightyellow",
+      mouseLeave: (e, node) => node.findObject("SHAPE").fill = "lightblue",
+      "_dragover": (e, node) => { // Correct: utiliser _dragover
+        e.preventDefault();
       },
-      $(go.Shape, "RoundedRectangle",
-        { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
-      $(go.TextBlock,
-        { margin: 8, editable: true },
-        new go.Binding("text", "name").makeTwoWay())
-    );
+      "_drop": (e, node) => { // Correct: utiliser _drop
+        const memberData = JSON.parse(e.dataTransfer.getData("text/plain"));
+        myDiagram.model.setDataProperty(node.data, "name", memberData.name);
+        // Tu pourrais également mettre à jour d'autres propriétés du nœud ici
+      }
+    },
+    $(go.Shape, "RoundedRectangle",
+      { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
+    $(go.TextBlock,
+      { margin: 8, editable: true },
+      new go.Binding("text", "name").makeTwoWay())
+  );
 
   myDiagram.linkTemplate =
     $(go.Link, { routing: go.Link.Orthogonal, corner: 5, reshapable: true },
