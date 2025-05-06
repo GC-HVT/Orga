@@ -12,7 +12,7 @@ async function chargerGroupes() {
     });
 
     if (!response.ok) {
-      throw new Error(`Erreur HTTP ${response.status}`);
+      throw new Error(Erreur HTTP ${response.status});
     }
 
     const data = await response.json();
@@ -68,7 +68,6 @@ function afficherMembres(membres) {
     div.textContent = member.displayName;
     div.dataset.id = member.id;
 
-    // Créer un objet JSON structuré à transmettre lors du drag
   div.addEventListener("dragstart", (event) => {
     const memberData = {
       key: member.id,
