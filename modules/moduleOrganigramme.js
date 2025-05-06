@@ -5,14 +5,13 @@ export function initializeDiagram(divId) {
 
   myDiagram = $(go.Diagram, divId, {
     "undoManager.isEnabled": true,
-    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }), // Propriété isVisible supprimée
+    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),
     "initialContentAlignment": go.Spot.Center,
-    "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
-    "initialAutoScale": go.Diagram.Uniform,
+    //"initialAutoScale": go.Diagram.Uniform, // Supprime cette ligne
     "hasHorizontalScrollbar": true,
     "hasVerticalScrollbar": true,
-    "linkingTool.isEnabled": true, // Activer l'outil de liaison
-    "relinkingTool.isEnabled": true, // Activer l'outil de reliaison
+    "linkingTool.isEnabled": true,
+    "relinkingTool.isEnabled": true,
   });
 
   myDiagram.nodeTemplate =
