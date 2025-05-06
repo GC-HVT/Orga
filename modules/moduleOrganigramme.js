@@ -34,6 +34,8 @@ export function initializeDiagram(divId) {
           }
         }
       },
+
+      
       $(go.Shape, "RoundedRectangle",
         { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
       $(go.Panel, "Vertical",
@@ -80,16 +82,14 @@ export function initializeDiagram(divId) {
   div.addEventListener("dragover", (e) => e.preventDefault());
   div.addEventListener("drop", (e) => {
     e.preventDefault();
-    const dataTransferString = e.dataTransfer.getData("text/plain");
+  
+    const dataTransferString = e.dataTransfer.getData("application/json-member");
     console.log("Données reçues lors du drop:", dataTransferString);
+  
     try {
       const memberData = JSON.parse(dataTransferString);
-      if (!memberData || typeof memberData !== "object" || !memberData.key) {
-        console.warn("Données JSON invalides ou incomplètes :", memberData);
-        return;
-      }
-
       const point = myDiagram.lastInput.documentPoint;
+  
       if (!myDiagram.model.findNodeDataForKey(memberData.key)) {
         myDiagram.model.addNodeData({
           key: memberData.key,
@@ -105,7 +105,6 @@ export function initializeDiagram(divId) {
       console.error("Erreur lors du parsing JSON:", error);
     }
   });
-}
 
 export function addNode() {
   myDiagram.model.addNodeData({ key: Date.now(), text: "Nouveau bloc", color: "lightblue" });
