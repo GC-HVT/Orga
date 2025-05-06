@@ -22,7 +22,8 @@ export function initializeDiagram(divId) {
         "_dragover": (e, node) => e.preventDefault(),
         "_drop": (e, node) => {
           try {
-            const memberData = JSON.parse(e.dataTransfer.getData("text/plain"));
+            const data = e.diagram.lastInput.dataTransfer;
+            const memberData = JSON.parse(data.getData("application/json-member"));
             if (!memberData || typeof memberData !== "object") throw new Error("Invalid member data");
 
             myDiagram.model.setDataProperty(node.data, "name", memberData.name);
@@ -35,9 +36,7 @@ export function initializeDiagram(divId) {
         }
       },
 
-      
-      $(go.Shape, "RoundedRectangle",
-        { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
+      $(go.Shape, "RoundedRectangle", { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
       $(go.Panel, "Vertical",
         $(go.TextBlock,
           { margin: new go.Margin(6, 6, 0, 6), font: "bold 10pt sans-serif", editable: true },
@@ -82,14 +81,14 @@ export function initializeDiagram(divId) {
   div.addEventListener("dragover", (e) => e.preventDefault());
   div.addEventListener("drop", (e) => {
     e.preventDefault();
-  
+
     const dataTransferString = e.dataTransfer.getData("application/json-member");
     console.log("Données reçues lors du drop:", dataTransferString);
-  
+
     try {
       const memberData = JSON.parse(dataTransferString);
       const point = myDiagram.lastInput.documentPoint;
-  
+
       if (!myDiagram.model.findNodeDataForKey(memberData.key)) {
         myDiagram.model.addNodeData({
           key: memberData.key,
