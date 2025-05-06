@@ -1,4 +1,4 @@
-import { chargerGroupes, chargerMembres } from './moduleMembres.js';
+import { chargerGroupes, chargerMembres } from './membresModule.js';
 import { initialiserOrganigramme, ajouterMembresAuDiagramme } from './moduleOrganigramme.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
