@@ -7,21 +7,37 @@ export function initializeDiagram(divId) {
     "undoManager.isEnabled": true,
     layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),
     "initialContentAlignment": go.Spot.Center,
-    //"initialAutoScale": go.Diagram.Uniform, // Supprime cette ligne
     "hasHorizontalScrollbar": true,
     "hasVerticalScrollbar": true,
     "linkingTool.isEnabled": true,
     "relinkingTool.isEnabled": true,
+    "commandHandler.deletable": true // Activer la suppression avec la touche Suppr
   });
 
   myDiagram.nodeTemplate =
     $(go.Node, "Auto",
-      $(go.Shape, "RoundedRectangle", { fill: "lightblue", strokeWidth: 0 }),
-      $(go.TextBlock, { margin: 8, editable: true }, new go.Binding("text", "name").makeTwoWay())
+      {
+        minSize: new go.Size(80, 40), // Taille minimale pour les nœuds
+        mouseEnter: (e, node) => node.findObject("SHAPE").fill = "lightyellow",
+        mouseLeave: (e, node) => node.findObject("SHAPE").fill = "lightblue",
+        "dragover": (e, node) => {
+          e.preventDefault(); // Autoriser le drop sur les nœuds
+        },
+        "drop": (e, node) => {
+          const memberData = JSON.parse(e.dataTransfer.getData("text/plain"));
+          myDiagram.model.setDataProperty(node.data, "name", memberData.name); // Mettre à jour le nom du nœud
+          // Ici, tu pourrais également mettre à jour d'autres propriétés du nœud avec les données du membre
+        }
+      },
+      $(go.Shape, "RoundedRectangle",
+        { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
+      $(go.TextBlock,
+        { margin: 8, editable: true },
+        new go.Binding("text", "name").makeTwoWay())
     );
 
   myDiagram.linkTemplate =
-    $(go.Link, { routing: go.Link.Orthogonal, corner: 5, reshapable: true }, // Rendre les liens reshapables
+    $(go.Link, { routing: go.Link.Orthogonal, corner: 5, reshapable: true },
       $(go.Shape),
       $(go.Shape, { toArrow: "Standard" })
     );
@@ -47,9 +63,13 @@ export function initializeDiagram(divId) {
   div.addEventListener("dragover", (e) => e.preventDefault());
   div.addEventListener("drop", (e) => {
     e.preventDefault();
-    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const memberData = JSON.parse(e.dataTransfer.getData("text/plain"));
     const point = myDiagram.lastInput.documentPoint;
-    myDiagram.model.addNodeData({ ...data, color: "lightgreen", loc: go.Point.stringify(point) }); // Couleur verte pour les membres déposés
+
+    // Vérifier si un nœud avec cette clé existe déjà
+    if (!myDiagram.model.findNodeDataForKey(memberData.key)) {
+      myDiagram.model.addNodeData({ ...memberData, color: "lightgreen", loc: go.Point.stringify(point) });
+    }
   });
 }
 
