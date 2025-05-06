@@ -5,27 +5,43 @@ export function initializeDiagram(divId) {
 
   myDiagram = $(go.Diagram, divId, {
     "undoManager.isEnabled": true,
-    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 })
+    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),
+    "initialContentAlignment": go.Spot.Center,  // Aligner au centre du canevas
+    "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
+    // Crédit GOJS dans le diagramme
+    "textEditor.selectionAlignment": go.Spot.Top,
+    "initialAutoScale": go.Diagram.Uniform, // Ajuste la taille
   });
 
+  // Template pour les blocs
   myDiagram.nodeTemplate =
     $(go.Node, "Auto",
       $(go.Shape, "RoundedRectangle", { fill: "lightblue", strokeWidth: 0 }),
       $(go.TextBlock, { margin: 8, editable: true }, new go.Binding("text", "name").makeTwoWay())
     );
 
+  // Template pour les liens
   myDiagram.linkTemplate =
     $(go.Link, { routing: go.Link.Orthogonal, corner: 5 },
       $(go.Shape),
       $(go.Shape, { toArrow: "Standard" })
     );
 
-  myDiagram.model = new go.GraphLinksModel([], []);
+  // Crédits GOJS
+  const creditText = $(go.TextBlock, {
+    text: "Powered by GoJS",
+    font: "italic 8pt sans-serif",
+    margin: new go.Margin(10, 10),
+    alignment: go.Spot.BottomRight
+  });
+  myDiagram.add(creditText); // Ajout des crédits
 
-  // Chargement depuis localStorage si dispo
+  // Chargement du diagramme depuis localStorage
   const savedDiagram = localStorage.getItem("orgDiagramData");
   if (savedDiagram) {
     myDiagram.model = go.Model.fromJson(JSON.parse(savedDiagram));
+  } else {
+    myDiagram.model = new go.GraphLinksModel([], []);
   }
 
   // Sauvegarde automatique
@@ -36,7 +52,7 @@ export function initializeDiagram(divId) {
     }
   });
 
-  // Drop d’un membre dans le diagramme
+  // Drop des membres dans le diagramme
   const div = document.getElementById(divId);
   div.addEventListener("dragover", (e) => e.preventDefault());
   div.addEventListener("drop", (e) => {
