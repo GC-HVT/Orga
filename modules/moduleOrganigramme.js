@@ -141,24 +141,28 @@ function drop(e) {
     const diagramDiv = document.getElementById("myDiagramDiv");
     if (diagramDiv) {
         diagramDiv.classList.remove("go-drag-over");
-        const currentDiagram = go.Diagram.findDiagramForKey(diagramDiv.goDiagramId); // Récupérer l'instance via l'ID
-        let data;
-        try {
-            data = JSON.parse(e.dataTransfer.getData("application/json") || e.dataTransfer.getData("text/plain"));
-        } catch (error) {
-            console.error("Erreur lors de la récupération des données du drop :", error);
-            return;
-        }
-        if (data && currentDiagram) {
+        if (typeof go !== 'undefined' && typeof go.Diagram !== 'undefined' && typeof go.Diagram.findDiagramForKey === 'function') {
+            const currentDiagram = go.Diagram.findDiagramForKey(diagramDiv.goDiagramId); // Récupérer l'instance via l'ID
+            let data;
             try {
-                const point = currentDiagram.transformViewToModel(currentDiagram.lastInput.documentPoint);
-                ajouterBloc({ ...data, loc: go.Point.stringify(point) });
+                data = JSON.parse(e.dataTransfer.getData("application/json") || e.dataTransfer.getData("text/plain"));
             } catch (error) {
-                console.error("Erreur lors de la transformation des coordonnées du drop :", error);
-                console.error("Instance de diagramme (via ID):", currentDiagram);
+                console.error("Erreur lors de la récupération des données du drop :", error);
+                return;
+            }
+            if (data && currentDiagram) {
+                try {
+                    const point = currentDiagram.transformViewToModel(currentDiagram.lastInput.documentPoint);
+                    ajouterBloc({ ...data, loc: go.Point.stringify(point) });
+                } catch (error) {
+                    console.error("Erreur lors de la transformation des coordonnées du drop :", error);
+                    console.error("Instance de diagramme (via ID):", currentDiagram);
+                }
+            } else {
+                console.warn("L'instance de diagramme n'est pas disponible lors du drop (via ID).");
             }
         } else {
-            console.warn("L'instance de diagramme n'est pas disponible lors du drop (via ID).");
+            console.error("La fonction go.Diagram.findDiagramForKey n'est pas définie.");
         }
     }
 }
