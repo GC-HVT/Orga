@@ -1,11 +1,11 @@
 import { chargerGroupes, chargerMembres } from "../modules/moduleMembres.js";
 import {
   initializeDiagram,
+  addMembersToDiagram,
   addNode,
   addLink,
   resetDiagram,
-  exportDiagram,
-  addMembersToDiagram
+  exportDiagram
 } from "../modules/moduleOrganigramme.js";
 
 document.addEventListener("DOMContentLoaded", () => {
