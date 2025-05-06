@@ -23,5 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Fonction pour ajouter des membres à l'organigramme
 function ajouterMembresDansDiagramme(membres) {
+  console.log("Membres à ajouter au diagramme :", membres);
   addMembersToDiagram(membres);
 }
