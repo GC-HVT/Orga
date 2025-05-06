@@ -13,10 +13,14 @@ function initializeDiagram(divId) {
         layout: $(go.TreeLayout, {
             angle: 90,
             layerSpacing: 35
-        }),
-        "dragOver": dragOver,
-        "drop": drop
+        })
     });
+
+    const diagramDiv = document.getElementById(divId);
+    if (diagramDiv) {
+        diagramDiv.addEventListener("dragover", dragOver);
+        diagramDiv.addEventListener("drop", drop);
+    }
 
     diagram.nodeTemplate = $(go.Node, "Auto", {
             locationSpot: go.Spot.Center
@@ -71,21 +75,19 @@ function initializeDiagram(divId) {
     diagram.model = new go.GraphLinksModel([], []);
 }
 
-// Fonction pour ajouter un bloc (anciennement addNode)
 function ajouterBloc(data) {
-    const position = new go.Point(0, 0); // Position initiale du nouveau nœud
+    const position = new go.Point(0, 0);
     const nodeData = {
-        key: Date.now(), // Générer une clé unique
+        key: Date.now(),
         name: "Nouveau Bloc",
         poste: "",
         tel: "",
         mail: "",
         loc: go.Point.stringify(position)
     };
-    diagram.model.addNodeData(nodeData);
+    diagram.model.addNodeData(data ? { ...data, loc: go.Point.stringify(diagram.transformViewToModel(diagram.lastInput.documentPoint)) } : nodeData);
 }
 
-// Fonction pour ajouter un lien entre deux nœuds
 function addLink(fromNode, toNode) {
     diagram.model.addLinkData({
         from: fromNode.key,
@@ -93,12 +95,10 @@ function addLink(fromNode, toNode) {
     });
 }
 
-// Fonction pour réinitialiser le diagramme
 function resetDiagram() {
     diagram.model = new go.GraphLinksModel([], []);
 }
 
-// Fonction pour exporter le diagramme en PDF
 function exportDiagram() {
     diagram.makeImageData({
         scale: 0.5,
@@ -113,7 +113,6 @@ function exportDiagram() {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            // Option pour exporter en PDF (nécessite html2pdf.js)
             const diagramDiv = document.getElementById("myDiagramDiv");
             html2pdf(diagramDiv, {
                 margin: 10,
@@ -130,15 +129,24 @@ function dragOver(e) {
     e.preventDefault();
     const canAccept = e.dataTransfer.types.includes("application/json") || e.dataTransfer.types.includes("text/plain");
     if (canAccept) {
-        diagram.div.classList.add("go-drag-over");
+        const diagramDiv = document.getElementById("myDiagramDiv");
+        if (diagramDiv) {
+            diagramDiv.classList.add("go-drag-over");
+        }
     } else {
-        diagram.div.classList.remove("go-drag-over");
+        const diagramDiv = document.getElementById("myDiagramDiv");
+        if (diagramDiv) {
+            diagramDiv.classList.remove("go-drag-over");
+        }
     }
 }
 
 function drop(e) {
     e.preventDefault();
-    diagram.div.classList.remove("go-drag-over");
+    const diagramDiv = document.getElementById("myDiagramDiv");
+    if (diagramDiv) {
+        diagramDiv.classList.remove("go-drag-over");
+    }
     let data;
     try {
         data = JSON.parse(e.dataTransfer.getData("application/json") || e.dataTransfer.getData("text/plain"));
@@ -154,7 +162,7 @@ function drop(e) {
 
 // Initialiser le diagramme lors du chargement du module
 if (!diagram) {
-    initializeDiagram("myDiagramDiv"); // Correction ici : initDiagram remplacé par initializeDiagram
+    initializeDiagram("myDiagramDiv");
 }
 
 // Exportation des fonctions
