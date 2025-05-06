@@ -79,23 +79,27 @@ export function initializeDiagram(divId) {
   div.addEventListener("dragover", (e) => e.preventDefault());
   div.addEventListener("drop", (e) => {
     e.preventDefault();
-    const memberData = JSON.parse(e.dataTransfer.getData("text/plain"));
-    const point = myDiagram.lastInput.documentPoint;
-
-    // Vérifier si un nœud avec cette clé existe déjà
-    if (!myDiagram.model.findNodeDataForKey(memberData.key)) {
-      myDiagram.model.addNodeData({
-        key: memberData.key, // Utilise memberData.key (qui est userId)
-        name: memberData.name,
-        poste: memberData.poste,
-        tel: memberData.tel,
-        mail: memberData.mail,
-        color: "lightgreen",
-        loc: go.Point.stringify(point)
-      });
+    const dataTransferString = e.dataTransfer.getData("text/plain");
+    console.log("Données reçues lors du drop:", dataTransferString);
+    try {
+      const memberData = JSON.parse(dataTransferString);
+      const point = myDiagram.lastInput.documentPoint;
+  
+      if (!myDiagram.model.findNodeDataForKey(memberData.key)) {
+        myDiagram.model.addNodeData({
+          key: memberData.key,
+          name: memberData.name,
+          poste: memberData.poste,
+          tel: memberData.tel,
+          mail: memberData.mail,
+          color: "lightgreen",
+          loc: go.Point.stringify(point)
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors du parsing JSON:", error);
     }
   });
-}
 
 export function addNode() {
   myDiagram.model.addNodeData({ key: Date.now(), text: "Nouveau bloc", color: "lightblue" });
