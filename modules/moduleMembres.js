@@ -37,7 +37,7 @@ function remplirSelectGroupes(groupes) {
 }
 
 // Fonction pour charger les membres d'un groupe
-async function chargerMembres() {
+async function chargerMembres(callback) {
   const groupId = document.getElementById("groupSelect").value;
   if (!groupId) {
     alert("Veuillez choisir un groupe.");
@@ -52,7 +52,13 @@ async function chargerMembres() {
     });
 
     const data = await response.json();
-    afficherMembres(data.members || []);
+    const membres = data.members || [];
+
+    afficherMembres(membres);
+
+    if (typeof callback === "function") {
+      callback(membres);
+    }
   } catch (error) {
     alert("Erreur lors du chargement des membres : " + error.message);
   }
