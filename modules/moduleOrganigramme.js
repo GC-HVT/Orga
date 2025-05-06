@@ -1,29 +1,28 @@
 let myDiagram;
 
 export function initializeDiagram(divId) {
-  const $ = go.GraphObject.make;  // GoJS est accessible globalement
+  const $ = go.GraphObject.make;
 
-  // Initialisation du diagramme
   myDiagram = $(go.Diagram, divId, {
     "undoManager.isEnabled": true,
-    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),
+    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40, isVisible: false }), // Layout désactivé par défaut
     "initialContentAlignment": go.Spot.Center,
     "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
     "initialAutoScale": go.Diagram.Uniform,
-    "hasHorizontalScrollbar": false,
-    "hasVerticalScrollbar": false,
+    "hasHorizontalScrollbar": true,
+    "hasVerticalScrollbar": true,
+    "linkingTool.isEnabled": true, // Activer l'outil de liaison
+    "relinkingTool.isEnabled": true, // Activer l'outil de reliaison
   });
 
-  // Définition du modèle de noeud
   myDiagram.nodeTemplate =
     $(go.Node, "Auto",
       $(go.Shape, "RoundedRectangle", { fill: "lightblue", strokeWidth: 0 }),
       $(go.TextBlock, { margin: 8, editable: true }, new go.Binding("text", "name").makeTwoWay())
     );
 
-  // Définition du modèle de lien
   myDiagram.linkTemplate =
-    $(go.Link, { routing: go.Link.Orthogonal, corner: 5 },
+    $(go.Link, { routing: go.Link.Orthogonal, corner: 5, reshapable: true }, // Rendre les liens reshapables
       $(go.Shape),
       $(go.Shape, { toArrow: "Standard" })
     );
@@ -32,7 +31,6 @@ export function initializeDiagram(divId) {
   const savedDiagram = localStorage.getItem("orgDiagramData");
   if (savedDiagram) {
     const savedModel = JSON.parse(savedDiagram);
-    console.log(savedModel);  // Vérifie que le modèle est bien chargé
     myDiagram.model = go.Model.fromJson(savedModel);
   } else {
     myDiagram.model = new go.GraphLinksModel([], []);
@@ -45,25 +43,14 @@ export function initializeDiagram(divId) {
       localStorage.setItem("orgDiagramData", json);
     }
   });
-  
+
   const div = document.getElementById(divId);
   div.addEventListener("dragover", (e) => e.preventDefault());
   div.addEventListener("drop", (e) => {
     e.preventDefault();
     const data = JSON.parse(e.dataTransfer.getData("text/plain"));
     const point = myDiagram.lastInput.documentPoint;
-    myDiagram.model.addNodeData({ ...data, color: "lightblue", loc: go.Point.stringify(point) });
-  });
-}
-
-// Nouvelle fonction pour ajouter les membres au diagramme
-export function addMembersToDiagram(membres) {
-  membres.forEach((membre) => {
-    myDiagram.model.addNodeData({
-      key: membre.id,
-      name: membre.displayName || "Nom inconnu",
-      color: "lightgreen",  // Définir une couleur différente pour les membres
-    });
+    myDiagram.model.addNodeData({ ...data, color: "lightgreen", loc: go.Point.stringify(point) }); // Couleur verte pour les membres déposés
   });
 }
 
@@ -76,7 +63,7 @@ export function addLink() {
   if (sel.length === 2 && sel[0] instanceof go.Node && sel[1] instanceof go.Node) {
     myDiagram.model.addLinkData({ from: sel[0].data.key, to: sel[1].data.key });
   } else {
-    alert("Veuillez sélectionner exactement deux blocs.");
+    alert("Veuillez sélectionner exactement deux blocs pour créer un lien.");
   }
 }
 
