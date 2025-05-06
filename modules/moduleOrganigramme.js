@@ -66,4 +66,4 @@ export function exportDiagram() {
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'pt', format: 'a4', orientation: 'landscape' }
   };
- 
+} 
