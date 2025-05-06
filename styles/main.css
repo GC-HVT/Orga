@@ -44,6 +44,7 @@ html, body {
 #myDiagramDiv {
   flex: 1;
   background-color: #ffffff;
-  min-height: 100vh;
+  min-height: 600px;
+  border: 1px solid #000;
   position: relative;
 }
