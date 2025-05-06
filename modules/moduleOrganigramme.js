@@ -66,4 +66,19 @@ export function exportDiagram() {
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'pt', format: 'a4', orientation: 'landscape' }
   };
-} 
+}
+
+// ✅ Fonction manquante ajoutée
+export function addMembersToDiagram(membres) {
+  membres.forEach(membre => {
+    const key = membre.key;
+    const existingNode = myDiagram.findNodeForKey(key);
+    if (!existingNode) {
+      myDiagram.model.addNodeData({
+        key: key,
+        text: membre.name,
+        color: "lightgreen"
+      });
+    }
+  });
+}
