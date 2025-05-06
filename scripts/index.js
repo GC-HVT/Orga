@@ -40,11 +40,15 @@ function injecterMembresSidebar(membres) {
     div.dataset.nom = membre.displayName || "Sans nom";
     div.textContent = membre.displayName || "Sans nom";
 
-    div.addEventListener("dragstart", (e) => {
-      e.dataTransfer.setData("text/plain", JSON.stringify({
-        key: div.dataset.id,
-        name: div.dataset.nom
+    div.addEventListener("dragstart", (event) => {
+      event.dataTransfer.setData("text/plain", JSON.stringify({
+        key: member.userId, // Utiliser member.userId comme clé
+        name: member.displayName,
+        poste: member.jobTitle,
+        tel: member.telephoneNumber,
+        mail: member.mail
       }));
+      event.dataTransfer.setData("memberId", member.userId); // Mise à jour ici aussi si tu utilises memberId ailleurs
     });
 
     container.appendChild(div);
