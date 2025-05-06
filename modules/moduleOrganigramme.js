@@ -1,18 +1,22 @@
 let myDiagram;
 
 export function initializeDiagram() {
-  const $ = go.GraphObject.make;  // fonctionne car go est global
+  const $ = go.GraphObject.make;
 
   myDiagram = $(go.Diagram, "myDiagramDiv", {
     "undoManager.isEnabled": true,
-    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 })
+    allowDrop: true,
+    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),
+    "draggingTool.isEnabled": true,
+    "animationManager.isEnabled": false
   });
 
   myDiagram.nodeTemplate =
     $(go.Node, "Auto",
       $(go.Shape, "RoundedRectangle", { fill: "lightblue", strokeWidth: 0 },
         new go.Binding("fill", "color")),
-      $(go.TextBlock, { margin: 8, editable: true }, new go.Binding("text").makeTwoWay())
+      $(go.TextBlock, { margin: 8, editable: true },
+        new go.Binding("text").makeTwoWay())
     );
 
   myDiagram.linkTemplate =
@@ -38,7 +42,11 @@ export function initializeDiagram() {
 }
 
 export function addNode() {
-  myDiagram.model.addNodeData({ key: Date.now(), text: "Nouveau bloc", color: "lightblue" });
+  myDiagram.model.addNodeData({
+    key: Date.now(),
+    text: "Nouveau bloc",
+    color: "lightblue"
+  });
 }
 
 export function addLink() {
@@ -56,27 +64,26 @@ export function resetDiagram() {
 }
 
 export function exportDiagram() {
-  const diagramDiv = document.getElementById("myDiagramDiv");
-  const opt = {
-    margin: 0,
-    filename: 'organigramme.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'pt', format: 'a4', orientation: 'landscape' }
-  };
+  const svg = myDiagram.makeSvg({ scale: 1, background: "white" });
+  const svgData = new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "organigramme.svg";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
-// ✅ Fonction manquante ajoutée
 export function addMembersToDiagram(membres) {
-  membres.forEach(membre => {
-    const key = membre.key;
-    const existingNode = myDiagram.findNodeForKey(key);
-    if (!existingNode) {
-      myDiagram.model.addNodeData({
-        key: key,
-        text: membre.name,
-        color: "lightgreen"
-      });
-    }
+  membres.forEach(m => {
+    myDiagram.model.addNodeData({
+      key: m.key,
+      text: m.name,
+      color: "lightgreen"
+    });
   });
 }
