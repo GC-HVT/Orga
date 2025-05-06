@@ -105,6 +105,7 @@ export function initializeDiagram(divId) {
       console.error("Erreur lors du parsing JSON:", error);
     }
   });
+}
 
 export function addNode() {
   myDiagram.model.addNodeData({ key: Date.now(), text: "Nouveau bloc", color: "lightblue" });
