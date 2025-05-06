@@ -2,35 +2,40 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
   <title>Organigramme Fonctionnel</title>
-
-  <!-- Script pour ton application -->
-  <script type="module" src="./scripts/index.js"></script>
-
-  <!-- Feuille de style -->
-  <link rel="stylesheet" href="./styles/main.css">
+  <link rel="stylesheet" href="styles/main.css">
 </head>
-
 <body>
+
   <div id="sidebar">
-    <h2>Groupes</h2>
-    <label for="groupSelect">Sélectionner un groupe :</label>
-    <select id="groupSelect" name="groupSelect">
-      <option value="">-- Sélectionner un groupe --</option>
-    </select>
-    <button id="loadMembersBtn">Charger les membres</button>
+    <div id="controls">
+      <button id="addNodeBtn">Ajouter un bloc</button>
+      <button id="addLinkBtn">Créer un lien</button>
+      <button id="resetBtn">Réinitialiser</button>
+      <button id="exportBtn">Exporter en PDF</button>
+    </div>
 
-    <h2>Membres</h2>
-    <div id="membersList"></div>
-  </div>
+    <div id="groupSelectContainer">
+      <label for="groupSelect">Choisir un groupe:</label>
+      <select id="groupSelect">
+        <option value="">-- Choisir un groupe --</option>
+      </select>
+      <button id="loadMembersBtn">Charger les membres</button>
+    </div>
 
-  <div id="diagramContainer">
-    <div id="myDiagramDiv">
-      <canvas tabindex="0" width="502" height="750"></canvas>
+    <div id="membersListContainer">
+      <h3>Membres</h3>
+      <div id="membersList"></div>
     </div>
   </div>
+
+  <div id="myDiagramDiv" style="position: relative; flex: 1;"></div>
+
+  <script src="https://unpkg.com/gojs/release/go.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="scripts/index.js"></script>
+  <script src="modules/modulesMembres.js"></script>
+  <script src="modules/moduleOrganigramme.js"></script>
 
 </body>
 </html>
