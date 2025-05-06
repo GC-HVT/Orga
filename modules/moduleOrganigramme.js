@@ -1,9 +1,7 @@
-import * as go from 'https://unpkg.com/gojs/release/go.js';
-
 let myDiagram;
 
 export function initializeDiagram() {
-  const $ = go.GraphObject.make;
+  const $ = go.GraphObject.make;  // fonctionne car go est global
 
   myDiagram = $(go.Diagram, "myDiagramDiv", {
     "undoManager.isEnabled": true,
