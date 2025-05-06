@@ -28,29 +28,32 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("exportBtn").addEventListener("click", () => exportDiagram());
 });
 
-function injecterMembresSidebar(membres) {
-  const container = document.getElementById("membersList");
-  container.innerHTML = ""; // vider avant ajout
+export function injecterMembresSidebar(membres) {
+  const membersListDiv = document.getElementById("membersList");
+  membersListDiv.innerHTML = ""; // Effacer la liste précédente
 
   membres.forEach((membre, index) => {
     const div = document.createElement("div");
-    div.className = "membre";
+    div.classList.add("member-card");
+    div.textContent = membre.displayName;
     div.draggable = true;
-    div.dataset.id = membre.id || index.toString();
-    div.dataset.nom = membre.displayName || "Sans nom";
-    div.textContent = membre.displayName || "Sans nom";
+    div.dataset.id = membre.userId || index.toString(); // Utiliser userId si disponible
+    div.dataset.nom = membre.displayName;
+    div.dataset.poste = membre.jobTitle;
+    div.dataset.tel = membre.telephoneNumber;
+    div.dataset.mail = membre.mail;
 
     div.addEventListener("dragstart", (event) => {
       event.dataTransfer.setData("text/plain", JSON.stringify({
-        key: member.userId, // Utiliser member.userId comme clé
-        name: member.displayName,
-        poste: member.jobTitle,
-        tel: member.telephoneNumber,
-        mail: member.mail
+        key: membre.userId,
+        name: membre.displayName,
+        poste: membre.jobTitle,
+        tel: membre.telephoneNumber,
+        mail: membre.mail
       }));
-      event.dataTransfer.setData("memberId", member.userId); // Mise à jour ici aussi si tu utilises memberId ailleurs
+      event.dataTransfer.setData("memberId", membre.userId);
     });
 
-    container.appendChild(div);
+    membersListDiv.appendChild(div);
   });
 }
