@@ -10,30 +10,33 @@ export function initializeDiagram(divId) {
     "hasHorizontalScrollbar": true,
     "hasVerticalScrollbar": true,
     "linkingTool.isEnabled": true,
-    "relinkingTool.isEnabled": true,
-    // "deletable": true // Supprimé car potentiellement source d'erreur et comportement par défaut
+    "relinkingTool.isEnabled": true
   });
 
   myDiagram.nodeTemplate =
     $(go.Node, "Auto",
       {
-        minSize: new go.Size(120, 80), // Augmenter la taille pour afficher l'ID
+        minSize: new go.Size(120, 80),
         mouseEnter: (e, node) => node.findObject("SHAPE").fill = "lightyellow",
         mouseLeave: (e, node) => node.findObject("SHAPE").fill = "lightblue",
-        "_dragover": (e, node) => {
-          e.preventDefault();
-        },
+        "_dragover": (e, node) => e.preventDefault(),
         "_drop": (e, node) => {
-          const memberData = JSON.parse(e.dataTransfer.getData("text/plain"));
-          myDiagram.model.setDataProperty(node.data, "name", memberData.name);
-          myDiagram.model.setDataProperty(node.data, "poste", memberData.poste);
-          myDiagram.model.setDataProperty(node.data, "tel", memberData.tel);
-          myDiagram.model.setDataProperty(node.data, "mail", memberData.mail);
+          try {
+            const memberData = JSON.parse(e.dataTransfer.getData("text/plain"));
+            if (!memberData || typeof memberData !== "object") throw new Error("Invalid member data");
+
+            myDiagram.model.setDataProperty(node.data, "name", memberData.name);
+            myDiagram.model.setDataProperty(node.data, "poste", memberData.poste);
+            myDiagram.model.setDataProperty(node.data, "tel", memberData.tel);
+            myDiagram.model.setDataProperty(node.data, "mail", memberData.mail);
+          } catch (err) {
+            console.error("Erreur dans le drop sur un node:", err);
+          }
         }
       },
       $(go.Shape, "RoundedRectangle",
         { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
-      $(go.Panel, "Vertical", // Organiser les TextBlock verticalement
+      $(go.Panel, "Vertical",
         $(go.TextBlock,
           { margin: new go.Margin(6, 6, 0, 6), font: "bold 10pt sans-serif", editable: true },
           new go.Binding("text", "name").makeTwoWay()),
@@ -46,7 +49,7 @@ export function initializeDiagram(divId) {
         $(go.TextBlock,
           { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
           new go.Binding("text", "mail").makeTwoWay()),
-        $(go.TextBlock, // Ajout pour afficher l'ID
+        $(go.TextBlock,
           { margin: new go.Margin(0, 6, 6, 6), font: "italic 8pt sans-serif" },
           new go.Binding("text", "key"))
       )
@@ -58,7 +61,6 @@ export function initializeDiagram(divId) {
       $(go.Shape, { toArrow: "Standard" })
     );
 
-  // Chargement des données sauvegardées ou modèle vide
   const savedDiagram = localStorage.getItem("orgDiagramData");
   if (savedDiagram) {
     const savedModel = JSON.parse(savedDiagram);
@@ -67,7 +69,6 @@ export function initializeDiagram(divId) {
     myDiagram.model = new go.GraphLinksModel([], []);
   }
 
-  // Sauvegarde du modèle dans localStorage
   myDiagram.addModelChangedListener((evt) => {
     if (evt.isTransactionFinished) {
       const json = myDiagram.model.toJson();
@@ -83,8 +84,12 @@ export function initializeDiagram(divId) {
     console.log("Données reçues lors du drop:", dataTransferString);
     try {
       const memberData = JSON.parse(dataTransferString);
+      if (!memberData || typeof memberData !== "object" || !memberData.key) {
+        console.warn("Données JSON invalides ou incomplètes :", memberData);
+        return;
+      }
+
       const point = myDiagram.lastInput.documentPoint;
-  
       if (!myDiagram.model.findNodeDataForKey(memberData.key)) {
         myDiagram.model.addNodeData({
           key: memberData.key,
@@ -100,6 +105,7 @@ export function initializeDiagram(divId) {
       console.error("Erreur lors du parsing JSON:", error);
     }
   });
+}
 
 export function addNode() {
   myDiagram.model.addNodeData({ key: Date.now(), text: "Nouveau bloc", color: "lightblue" });
