@@ -12,7 +12,7 @@ async function chargerGroupes() {
     });
 
     if (!response.ok) {
-      throw new Error(Erreur HTTP ${response.status});
+      throw new Error(`Erreur HTTP ${response.status}`);  // Correction ici
     }
 
     const data = await response.json();
@@ -68,16 +68,16 @@ function afficherMembres(membres) {
     div.textContent = member.displayName;
     div.dataset.id = member.id;
 
-  div.addEventListener("dragstart", (event) => {
-    const memberData = {
-      key: member.id,
-      name: member.displayName || "",
-      poste: member.jobTitle || "",
-      tel: member.telephoneNumber || "",
-      mail: member.mail || ""
-    };
-    event.dataTransfer.setData("application/json", JSON.stringify(memberData));
-  });
+    div.addEventListener("dragstart", (event) => {
+      const memberData = {
+        key: member.id,
+        name: member.displayName || "",
+        poste: member.jobTitle || "",
+        tel: member.telephoneNumber || "",
+        mail: member.mail || ""
+      };
+      event.dataTransfer.setData("application/json", JSON.stringify(memberData));
+    });
 
     membersList.appendChild(div);
   });
