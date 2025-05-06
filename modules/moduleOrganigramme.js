@@ -141,24 +141,25 @@ function drop(e) {
     const diagramDiv = document.getElementById("myDiagramDiv");
     if (diagramDiv) {
         diagramDiv.classList.remove("go-drag-over");
-    }
-    let data;
-    try {
-        data = JSON.parse(e.dataTransfer.getData("application/json") || e.dataTransfer.getData("text/plain"));
-    } catch (error) {
-        console.error("Erreur lors de la récupération des données du drop :", error);
-        return;
-    }
-    if (data && diagram) { // Utilisation explicite de la variable globale 'diagram'
+        const currentDiagram = go.Diagram.findDiagramForKey(diagramDiv.goDiagramId); // Récupérer l'instance via l'ID
+        let data;
         try {
-            const point = diagram.transformViewToModel(diagram.lastInput.documentPoint);
-            ajouterBloc({ ...data, loc: go.Point.stringify(point) });
+            data = JSON.parse(e.dataTransfer.getData("application/json") || e.dataTransfer.getData("text/plain"));
         } catch (error) {
-            console.error("Erreur lors de la transformation des coordonnées du drop :", error);
-            console.error("Instance de diagramme :", diagram);
+            console.error("Erreur lors de la récupération des données du drop :", error);
+            return;
         }
-    } else {
-        console.warn("L'instance de diagramme n'est pas disponible lors du drop.");
+        if (data && currentDiagram) {
+            try {
+                const point = currentDiagram.transformViewToModel(currentDiagram.lastInput.documentPoint);
+                ajouterBloc({ ...data, loc: go.Point.stringify(point) });
+            } catch (error) {
+                console.error("Erreur lors de la transformation des coordonnées du drop :", error);
+                console.error("Instance de diagramme (via ID):", currentDiagram);
+            }
+        } else {
+            console.warn("L'instance de diagramme n'est pas disponible lors du drop (via ID).");
+        }
     }
 }
 
