@@ -54,12 +54,10 @@ export function injecterMembresSidebar(membres) {
     div.dataset.mail = memberData.mail;
 
     div.addEventListener("dragstart", (event) => {
-      event.dataTransfer.setData("text/plain", JSON.stringify(memberData));
-      // Optionnel : ligne ci-dessous inutile si non utilisée dans le drop
-      event.dataTransfer.setData("memberId", memberData.key);
-      console.log("Drag member:", memberData);
+      const json = JSON.stringify(memberData);
+      event.dataTransfer.setData("application/json-member", json);
+      console.log("Drag member JSON:", json);
     });
-
     membersListDiv.appendChild(div);
   });
 }
