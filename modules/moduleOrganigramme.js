@@ -11,29 +11,43 @@ export function initializeDiagram(divId) {
     "hasVerticalScrollbar": true,
     "linkingTool.isEnabled": true,
     "relinkingTool.isEnabled": true,
+    "deletable": true // Activer la suppression avec la touche Suppr
   });
 
-myDiagram.nodeTemplate =
-  $(go.Node, "Auto",
-    {
-      minSize: new go.Size(80, 40),
-      mouseEnter: (e, node) => node.findObject("SHAPE").fill = "lightyellow",
-      mouseLeave: (e, node) => node.findObject("SHAPE").fill = "lightblue",
-      "_dragover": (e, node) => { // Correct: utiliser _dragover
-        e.preventDefault();
+  myDiagram.nodeTemplate =
+    $(go.Node, "Auto",
+      {
+        minSize: new go.Size(120, 60), // Taille minimale pour afficher plus d'informations
+        mouseEnter: (e, node) => node.findObject("SHAPE").fill = "lightyellow",
+        mouseLeave: (e, node) => node.findObject("SHAPE").fill = "lightblue",
+        "_dragover": (e, node) => {
+          e.preventDefault();
+        },
+        "_drop": (e, node) => {
+          const memberData = JSON.parse(e.dataTransfer.getData("text/plain"));
+          myDiagram.model.setDataProperty(node.data, "name", memberData.name);
+          myDiagram.model.setDataProperty(node.data, "poste", memberData.poste);
+          myDiagram.model.setDataProperty(node.data, "tel", memberData.tel);
+          myDiagram.model.setDataProperty(node.data, "mail", memberData.mail);
+        }
       },
-      "_drop": (e, node) => { // Correct: utiliser _drop
-        const memberData = JSON.parse(e.dataTransfer.getData("text/plain"));
-        myDiagram.model.setDataProperty(node.data, "name", memberData.name);
-        // Tu pourrais également mettre à jour d'autres propriétés du nœud ici
-      }
-    },
-    $(go.Shape, "RoundedRectangle",
-      { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
-    $(go.TextBlock,
-      { margin: 8, editable: true },
-      new go.Binding("text", "name").makeTwoWay())
-  );
+      $(go.Shape, "RoundedRectangle",
+        { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
+      $(go.Panel, "Vertical", // Organiser les TextBlock verticalement
+        $(go.TextBlock,
+          { margin: new go.Margin(6, 6, 0, 6), font: "bold 10pt sans-serif", editable: true },
+          new go.Binding("text", "name").makeTwoWay()),
+        $(go.TextBlock,
+          { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
+          new go.Binding("text", "poste").makeTwoWay()),
+        $(go.TextBlock,
+          { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
+          new go.Binding("text", "tel").makeTwoWay()),
+        $(go.TextBlock,
+          { margin: new go.Margin(0, 6, 6, 6), font: "9pt sans-serif", editable: true },
+          new go.Binding("text", "mail").makeTwoWay())
+      )
+    );
 
   myDiagram.linkTemplate =
     $(go.Link, { routing: go.Link.Orthogonal, corner: 5, reshapable: true },
@@ -67,7 +81,15 @@ myDiagram.nodeTemplate =
 
     // Vérifier si un nœud avec cette clé existe déjà
     if (!myDiagram.model.findNodeDataForKey(memberData.key)) {
-      myDiagram.model.addNodeData({ ...memberData, color: "lightgreen", loc: go.Point.stringify(point) });
+      myDiagram.model.addNodeData({
+        key: memberData.key, // Utilise memberData.key (qui est userId)
+        name: memberData.name,
+        poste: memberData.poste,
+        tel: memberData.tel,
+        mail: memberData.mail,
+        color: "lightgreen",
+        loc: go.Point.stringify(point)
+      });
     }
   });
 }
