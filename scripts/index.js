@@ -1,7 +1,9 @@
-import { chargerGroupes, chargerMembres } from "../modules/moduleMembres.js";
+import {
+  chargerGroupes,
+  chargerMembres
+} from "../modules/moduleMembres.js";
 import {
   initializeDiagram,
-  addMembersToDiagram,
   addNode,
   addLink,
   resetDiagram,
