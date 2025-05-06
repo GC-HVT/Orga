@@ -1,3 +1,33 @@
+import {
+  chargerGroupes,
+  chargerMembres
+} from "../modules/moduleMembres.js";
+import {
+  initializeDiagram,
+  addNode,
+  addLink,
+  resetDiagram,
+  exportDiagram
+} from "../modules/moduleOrganigramme.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+  initializeDiagram("myDiagramDiv");
+  chargerGroupes();
+
+  document.getElementById("loadMembersBtn").addEventListener("click", () => {
+    chargerMembres(injecterMembresSidebar);
+  });
+
+  document.getElementById("groupSelect").addEventListener("change", () => {
+    chargerMembres(injecterMembresSidebar);
+  });
+
+  document.getElementById("addNodeBtn").addEventListener("click", () => addNode());
+  document.getElementById("addLinkBtn").addEventListener("click", () => addLink());
+  document.getElementById("resetBtn").addEventListener("click", () => resetDiagram());
+  document.getElementById("exportBtn").addEventListener("click", () => exportDiagram());
+});
+
 export function injecterMembresSidebar(membres) {
   const membersListDiv = document.getElementById("membersList");
   membersListDiv.innerHTML = ""; // Effacer la liste précédente
