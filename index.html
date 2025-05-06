@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Organigramme Fonctionnel</title>
+  <script src="https://unpkg.com/gojs/release/go.js"></script>
+  <script type="module" src="./index.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+    }
+
+    #sidebar {
+      width: 300px;
+      border-right: 1px solid #ccc;
+      padding: 1rem;
+      box-sizing: border-box;
+      background-color: #f5f5f5;
+      overflow-y: auto;
+    }
+
+    #diagramContainer {
+      flex: 1;
+      position: relative;
+    }
+
+    #myDiagramDiv {
+      width: 100%;
+      height: 100%;
+    }
+
+    .member {
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      background-color: white;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      cursor: grab;
+      font-size: 14px;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      font-size: 14px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="sidebar">
+    <h2>Groupes</h2>
+    <select id="selectGroup">
+      <option value="">-- Sélectionner un groupe --</option>
+    </select>
+
+    <button id="loadMembersBtn">Charger les membres</button>
+
+    <h2>Membres</h2>
+    <div id="memberList">
+      <!-- Les membres seront insérés ici -->
+    </div>
+  </div>
+
+  <div id="diagramContainer">
+    <div id="myDiagramDiv"></div>
+  </div>
+
+</body>
+</html>
