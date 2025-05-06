@@ -1,135 +1,139 @@
-let myDiagram;
+let diagram;
 
-export function initializeDiagram(divId) {
+export function initializeDiagram(containerId) {
   const $ = go.GraphObject.make;
 
-  myDiagram = $(go.Diagram, divId, {
+  diagram = $(go.Diagram, containerId, {
+    initialContentAlignment: go.Spot.Center,
     "undoManager.isEnabled": true,
-    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),
-    "initialContentAlignment": go.Spot.Center,
-    "hasHorizontalScrollbar": true,
-    "hasVerticalScrollbar": true,
-    "linkingTool.isEnabled": true,
-    "relinkingTool.isEnabled": true
+    allowDrop: true,
+    "draggingTool.dragsLink": true,
+    "linkingTool.direction": go.LinkingTool.ForwardsOnly
   });
 
-  myDiagram.nodeTemplate =
-    $(go.Node, "Auto", {
-      minSize: new go.Size(120, 80),
-      mouseEnter: (e, node) => node.findObject("SHAPE").fill = "lightyellow",
-      mouseLeave: (e, node) => node.findObject("SHAPE").fill = "lightblue",
-      "_dragover": (e, node) => e.preventDefault(),
-      "_drop": (e, node) => {
-        try {
-          const memberData = JSON.parse(e.dataTransfer.getData("application/json-member"));
-          if (!memberData || typeof memberData !== "object") throw new Error("Invalid member data");
+  diagram.nodeTemplate =
+    $(go.Node, "Auto",
+      {
+        selectionAdorned: true,
+        deletable: true
+      },
+      $(go.Shape, "RoundedRectangle", {
+        fill: "lightblue",
+        stroke: "gray",
+        strokeWidth: 1
+      }),
+      $(go.Panel, "Table",
+        { padding: 6 },
+        $(go.RowColumnDefinition, { column: 1, width: 4 }),
+        $(go.TextBlock,
+          {
+            row: 0, columnSpan: 2,
+            font: "bold 14px sans-serif",
+            stroke: "#333"
+          },
+          new go.Binding("text", "name")
+        ),
+        $(go.TextBlock,
+          {
+            row: 1, column: 0,
+            stroke: "#555",
+            font: "12px sans-serif"
+          },
+          new go.Binding("text", "poste")
+        ),
+        $(go.TextBlock,
+          {
+            row: 2, column: 0,
+            stroke: "#555",
+            font: "12px sans-serif"
+          },
+          new go.Binding("text", "tel")
+        ),
+        $(go.TextBlock,
+          {
+            row: 3, column: 0,
+            stroke: "#555",
+            font: "12px sans-serif"
+          },
+          new go.Binding("text", "mail")
+        )
+      )
+    );
 
-          myDiagram.model.setDataProperty(node.data, "name", memberData.name);
-          myDiagram.model.setDataProperty(node.data, "poste", memberData.poste);
-          myDiagram.model.setDataProperty(node.data, "tel", memberData.tel);
-          myDiagram.model.setDataProperty(node.data, "mail", memberData.mail);
-        } catch (err) {
-          console.error("Erreur dans le drop sur un node:", err);
-        }
-      }
-    },
-
-    $(go.Shape, "RoundedRectangle", { fill: "lightblue", strokeWidth: 0, name: "SHAPE" }),
-    $(go.Panel, "Vertical",
-      $(go.TextBlock,
-        { margin: new go.Margin(6, 6, 0, 6), font: "bold 10pt sans-serif", editable: true },
-        new go.Binding("text", "name").makeTwoWay()),
-      $(go.TextBlock,
-        { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
-        new go.Binding("text", "poste").makeTwoWay()),
-      $(go.TextBlock,
-        { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
-        new go.Binding("text", "tel").makeTwoWay()),
-      $(go.TextBlock,
-        { margin: new go.Margin(0, 6, 0, 6), font: "9pt sans-serif", editable: true },
-        new go.Binding("text", "mail").makeTwoWay()),
-      $(go.TextBlock,
-        { margin: new go.Margin(0, 6, 6, 6), font: "italic 8pt sans-serif" },
-        new go.Binding("text", "key"))
-    )
-  );
-
-  myDiagram.linkTemplate =
-    $(go.Link, { routing: go.Link.Orthogonal, corner: 5, reshapable: true },
+  diagram.linkTemplate =
+    $(go.Link,
+      { relinkableFrom: true, relinkableTo: true },
       $(go.Shape),
       $(go.Shape, { toArrow: "Standard" })
     );
 
-  const savedDiagram = localStorage.getItem("orgDiagramData");
-  if (savedDiagram) {
-    const savedModel = JSON.parse(savedDiagram);
-    myDiagram.model = go.Model.fromJson(savedModel);
-  } else {
-    myDiagram.model = new go.GraphLinksModel([], []);
-  }
-
-  myDiagram.addModelChangedListener((evt) => {
-    if (evt.isTransactionFinished) {
-      const json = myDiagram.model.toJson();
-      localStorage.setItem("orgDiagramData", json);
-    }
+  const container = document.getElementById(containerId);
+  container.addEventListener("dragover", (event) => {
+    event.preventDefault();
   });
 
-  const div = document.getElementById(divId);
-  div.addEventListener("dragover", (e) => e.preventDefault());
-  div.addEventListener("drop", (e) => {
-    e.preventDefault();
+  container.addEventListener("drop", (event) => {
+    event.preventDefault();
+    const json = event.dataTransfer.getData("text/plain");
 
-    const dataTransferString = e.dataTransfer.getData("application/json-member");
-    console.log("Données reçues lors du drop:", dataTransferString);
+    if (!json) {
+      console.error("Aucune donnée reçue pour le drop.");
+      return;
+    }
 
+    let membreData;
     try {
-      const memberData = JSON.parse(dataTransferString);
-      const point = myDiagram.lastInput.documentPoint;
-
-      if (!myDiagram.model.findNodeDataForKey(memberData.key)) {
-        myDiagram.model.addNodeData({
-          key: memberData.key,
-          name: memberData.name,
-          poste: memberData.poste,
-          tel: memberData.tel,
-          mail: memberData.mail,
-          color: "lightgreen",
-          loc: go.Point.stringify(point)
-        });
-      }
+      membreData = JSON.parse(json);
     } catch (error) {
       console.error("Erreur lors du parsing JSON:", error);
+      return;
     }
+
+    const point = diagram.lastInput.documentPoint;
+    diagram.model.addNodeData({
+      key: membreData.key,
+      name: membreData.name,
+      poste: membreData.poste,
+      tel: membreData.tel,
+      mail: membreData.mail,
+      loc: go.Point.stringify(point)
+    });
   });
 }
 
 export function addNode() {
-  myDiagram.model.addNodeData({ key: Date.now(), text: "Nouveau bloc", color: "lightblue" });
+  diagram.model.addNodeData({
+    key: "nouveau",
+    name: "Nouveau",
+    poste: "Poste",
+    tel: "",
+    mail: ""
+  });
 }
 
 export function addLink() {
-  const sel = myDiagram.selection.toArray();
-  if (sel.length === 2 && sel[0] instanceof go.Node && sel[1] instanceof go.Node) {
-    myDiagram.model.addLinkData({ from: sel[0].data.key, to: sel[1].data.key });
+  const sel = diagram.selection.toArray();
+  if (sel.length === 2) {
+    diagram.model.addLinkData({
+      from: sel[0].data.key,
+      to: sel[1].data.key
+    });
   } else {
-    alert("Veuillez sélectionner exactement deux blocs pour créer un lien.");
+    alert("Sélectionnez exactement deux blocs pour créer un lien.");
   }
 }
 
 export function resetDiagram() {
-  localStorage.removeItem("orgDiagramData");
-  myDiagram.model = new go.GraphLinksModel([], []);
+  diagram.clear();
 }
 
 export function exportDiagram() {
-  const diagramDiv = document.getElementById("myDiagramDiv");
-  const opt = {
-    margin: 0,
-    filename: 'organigramme.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'pt', format: 'a4', orientation: 'landscape' }
-  };
-  html2pdf().from(diagramDiv).set(opt).save();
+  const svg = diagram.makeSvg({ scale: 1, background: "white" });
+  const blob = new Blob([svg.outerHTML], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "organigramme.svg";
+  a.click();
+  URL.revokeObjectURL(url);
 }
