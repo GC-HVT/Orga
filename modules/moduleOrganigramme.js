@@ -1,35 +1,52 @@
+import * as go from 'https://unpkg.com/gojs/release/go.js';
+
 let myDiagram;
 
 export function initializeDiagram(divId) {
   const $ = go.GraphObject.make;
 
+  // Initialisation du diagramme
   myDiagram = $(go.Diagram, divId, {
-    "undoManager.isEnabled": true,
-    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),
-    "initialContentAlignment": go.Spot.Center,
-    "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
-    "initialAutoScale": go.Diagram.Uniform,
+    "undoManager.isEnabled": true,  // Permet l'annulation et la réouverture des actions
+    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 40 }),  // Configuration de l'agencement
+    "initialContentAlignment": go.Spot.Center,  // Centrage du diagramme
+    "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,  // Permet le zoom avec la molette de la souris
+    "initialAutoScale": go.Diagram.Uniform,  // Mise à l'échelle automatique
+    "hasHorizontalScrollbar": false,  // Désactive la barre de défilement horizontale
+    "hasVerticalScrollbar": false,  // Désactive la barre de défilement verticale
   });
 
+  // Définition du modèle de noeud
   myDiagram.nodeTemplate =
     $(go.Node, "Auto",
       $(go.Shape, "RoundedRectangle", { fill: "lightblue", strokeWidth: 0 }),
       $(go.TextBlock, { margin: 8, editable: true }, new go.Binding("text", "name").makeTwoWay())
     );
 
+  // Définition du modèle de lien
   myDiagram.linkTemplate =
     $(go.Link, { routing: go.Link.Orthogonal, corner: 5 },
       $(go.Shape),
       $(go.Shape, { toArrow: "Standard" })
     );
 
+  // Vérification et chargement des données sauvegardées
   const savedDiagram = localStorage.getItem("orgDiagramData");
   if (savedDiagram) {
     const savedModel = JSON.parse(savedDiagram);
     myDiagram.model = go.Model.fromJson(savedModel);
   } else {
-    myDiagram.model = new go.GraphLinksModel([], []);
+    myDiagram.model = new go.GraphLinksModel([], []);  // Création d'un modèle vide si aucune donnée
   }
+
+  // Sauvegarde des modifications dans localStorage
+  myDiagram.addModelChangedListener((evt) => {
+    if (evt.isTransactionFinished) {
+      const json = myDiagram.model.toJson();
+      localStorage.setItem("orgDiagramData", json);
+    }
+  });
+}
 
   myDiagram.addModelChangedListener((evt) => {
     if (evt.isTransactionFinished) {
