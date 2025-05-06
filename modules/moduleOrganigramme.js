@@ -16,65 +16,43 @@ function initDiagram() {
     })
   });
 
-  diagram.nodeTemplate = $(
-    go.Node,
-    "Auto",
-    { locationSpot: go.Spot.Center },
+  diagram.nodeTemplate = $(go.Node, "Auto", {
+      locationSpot: go.Spot.Center
+    },
     new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
-    $(
-      go.Shape,
-      "RoundedRectangle",
-      {
-        fill: "#ACE600",
-        stroke: null
+    $(go.Shape, "RoundedRectangle", {
+      fill: "#ACE600",
+      stroke: null
+    }, new go.Binding("fill", "color")),
+    $(go.Panel, "Table", {
+        margin: 6,
+        maxSize: new go.Size(200, NaN)
       },
-      new go.Binding("fill", "color")
-    ),
-    $(
-      go.Panel,
-      "Table",
-      { margin: 6, maxSize: new go.Size(200, NaN) },
-      $(
-        go.TextBlock,
-        {
-          row: 0,
-          font: "bold 14px sans-serif",
-          stroke: "#333",
-          maxSize: new go.Size(200, NaN),
-          wrap: go.TextBlock.WrapFit
-        },
-        new go.Binding("text", "name")
-      ),
-      $(
-        go.TextBlock,
-        {
-          row: 1,
-          margin: new go.Margin(4, 0, 0, 0),
-          maxSize: new go.Size(200, NaN),
-          wrap: go.TextBlock.WrapFit
-        },
-        new go.Binding("text", "poste")
-      ),
-      $(
-        go.TextBlock,
-        {
-          row: 2,
-          margin: new go.Margin(4, 0, 0, 0),
-          maxSize: new go.Size(200, NaN),
-          wrap: go.TextBlock.WrapFit
-        },
-        new go.Binding("text", "tel")
-      ),
-      $(
-        go.TextBlock,
-        {
-          row: 3,
-          margin: new go.Margin(4, 0, 0, 0),
-          maxSize: new go.Size(200, NaN),
-          wrap: go.TextBlock.WrapFit
-        },
-        new go.Binding("text", "mail")
-      )
+      $(go.TextBlock, {
+        row: 0,
+        font: "bold 14px sans-serif",
+        stroke: "#333",
+        maxSize: new go.Size(200, NaN),
+        wrap: go.TextBlock.WrapFit
+      }, new go.Binding("text", "name")),
+      $(go.TextBlock, {
+        row: 1,
+        margin: new go.Margin(4, 0, 0, 0),
+        maxSize: new go.Size(200, NaN),
+        wrap: go.TextBlock.WrapFit
+      }, new go.Binding("text", "poste")),
+      $(go.TextBlock, {
+        row: 2,
+        margin: new go.Margin(4, 0, 0, 0),
+        maxSize: new go.Size(200, NaN),
+        wrap: go.TextBlock.WrapFit
+      }, new go.Binding("text", "tel")),
+      $(go.TextBlock, {
+        row: 3,
+        margin: new go.Margin(4, 0, 0, 0),
+        maxSize: new go.Size(200, NaN),
+        wrap: go.TextBlock.WrapFit
+      }, new go.Binding("text", "mail"))
     )
   );
 
@@ -86,31 +64,13 @@ function ajouterBloc(data) {
   diagram.model.addNodeData(data);
 }
 
-// Gestion du drop depuis la sidebar
-const diagramDiv = document.getElementById("myDiagramDiv");
+// Fonction pour ajouter un lien entre deux nœuds
+function addLink(fromNode, toNode) {
+  diagram.model.addLinkData({
+    from: fromNode.key,
+    to: toNode.key
+  });
+}
 
-diagramDiv.addEventListener("dragover", (event) => {
-  event.preventDefault();
-});
-
-diagramDiv.addEventListener("drop", (event) => {
-  event.preventDefault();
-  const point = diagram.lastInput.documentPoint;
-
-  try {
-    const jsonData = JSON.parse(event.dataTransfer.getData("application/json"));
-    ajouterBloc({
-      key: jsonData.key,
-      name: jsonData.name,
-      poste: jsonData.poste,
-      tel: jsonData.tel,
-      mail: jsonData.mail,
-      loc: go.Point.stringify(point)
-    });
-  } catch (error) {
-    console.error("Erreur lors du parsing JSON:", error);
-    alert("Erreur lors du parsing JSON: " + error.message);
-  }
-});
-
-export { initDiagram, ajouterBloc };
+// Exportation des fonctions
+export { initDiagram, ajouterBloc, addLink };
