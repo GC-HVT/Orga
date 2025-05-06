@@ -9,10 +9,11 @@ import {
     resetDiagram,
     exportDiagram
 } from "../modules/moduleOrganigramme.js";
+import * as go from "gojs"; // Importez la librairie GoJS complète
 
 document.addEventListener("DOMContentLoaded", () => {
     // Initialiser le diagramme avec l'ID de la div
-    initializeDiagram("myDiagramDiv");
+    const diagram = initializeDiagram("myDiagramDiv"); // Récupérer l'instance du diagramme
 
     // Charger les groupes
     chargerGroupes();
@@ -32,13 +33,40 @@ document.addEventListener("DOMContentLoaded", () => {
         ajouterBloc(); // Correction ici : addNode() remplacé par ajouterBloc()
     });
 
+    let selectedNodes = [];
+
+    // Fonction pour gérer la sélection des nœuds
+    diagram.addDiagramListener("ObjectSingleClicked", (e) => {
+        const part = e.subject.part;
+        if (part instanceof go.Node) {
+            if (selectedNodes.length < 2 && !selectedNodes.includes(part)) {
+                selectedNodes.push(part);
+                part.isSelected = true; // Indiquer visuellement la sélection
+            } else if (selectedNodes.includes(part)) {
+                selectedNodes = selectedNodes.filter(node => node !== part);
+                part.isSelected = false; // Désélectionner
+            } else {
+                // Limiter à deux sélections, désélectionner la première et sélectionner la nouvelle
+                if (selectedNodes[0]) selectedNodes[0].isSelected = false;
+                selectedNodes = [part];
+                part.isSelected = true;
+            }
+            console.log("Nœuds sélectionnés :", selectedNodes.map(node => node.key));
+        }
+    });
+
     // Ajouter un lien entre les nœuds lors du clic sur le bouton "Add Link"
     document.getElementById("addLinkBtn").addEventListener("click", () => {
-        // Pour ajouter un lien, tu pourrais avoir besoin d'une logique pour sélectionner les nœuds à relier
-        // Ceci est une implémentation basique
-        const fromNode = { key: 1 };  // Exemple de nœud source
-        const toNode = { key: 2 };    // Exemple de nœud cible
-        addLink(fromNode, toNode);    // Ajouter un lien entre les deux nœuds
+        if (selectedNodes.length === 2) {
+            const fromNodeData = selectedNodes[0].data;
+            const toNodeData = selectedNodes[1].data;
+            addLink(fromNodeData, toNodeData);
+            // Réinitialiser la sélection
+            selectedNodes.forEach(node => node.isSelected = false);
+            selectedNodes = [];
+        } else {
+            alert("Veuillez sélectionner deux nœuds pour créer un lien.");
+        }
     });
 
     // Réinitialiser le diagramme
