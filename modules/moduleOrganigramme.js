@@ -1,5 +1,4 @@
 const $ = go.GraphObject.make;
-
 let diagram;
 
 function initializeDiagram(divId) {
@@ -78,14 +77,14 @@ function initializeDiagram(divId) {
 function ajouterBloc(data) {
     const position = new go.Point(0, 0);
     const nodeData = {
-        key: Date.now(),
-        name: "Nouveau Bloc",
-        poste: "",
-        tel: "",
-        mail: "",
-        loc: go.Point.stringify(position)
+        key: data ? data.key : Date.now(),
+        name: data ? data.name : "Nouveau Bloc",
+        poste: data ? data.poste : "",
+        tel: data ? data.tel : "",
+        mail: data ? data.mail : "",
+        loc: data ? go.Point.stringify(diagram.transformViewToModel(diagram.lastInput.documentPoint)) : go.Point.stringify(position)
     };
-    diagram.model.addNodeData(data ? { ...data, loc: go.Point.stringify(diagram.transformViewToModel(diagram.lastInput.documentPoint)) } : nodeData);
+    diagram.model.addNodeData(nodeData);
 }
 
 function addLink(fromNode, toNode) {
@@ -128,16 +127,9 @@ function exportDiagram() {
 function dragOver(e) {
     e.preventDefault();
     const canAccept = e.dataTransfer.types.includes("application/json") || e.dataTransfer.types.includes("text/plain");
-    if (canAccept) {
-        const diagramDiv = document.getElementById("myDiagramDiv");
-        if (diagramDiv) {
-            diagramDiv.classList.add("go-drag-over");
-        }
-    } else {
-        const diagramDiv = document.getElementById("myDiagramDiv");
-        if (diagramDiv) {
-            diagramDiv.classList.remove("go-drag-over");
-        }
+    const diagramDiv = document.getElementById("myDiagramDiv");
+    if (diagramDiv) {
+        diagramDiv.classList.toggle("go-drag-over", canAccept);
     }
 }
 
@@ -154,10 +146,19 @@ function drop(e) {
         console.error("Erreur lors de la récupération des données du drop :", error);
         return;
     }
-    if (data) {
-        const point = diagram.transformViewToModel(diagram.lastInput.documentPoint);
-        ajouterBloc({ ...data, loc: go.Point.stringify(point) });
+    if (data && diagram) {
+        try {
+            const point = diagram.transformViewToModel(diagram.lastInput.documentPoint);
+            ajouterBloc({ ...data, loc: go.Point.stringify(point) });
+        } catch (error) {
+            console.error("Erreur lors de la transformation des coordonnées du drop :", error);
+        }
     }
+}
+
+// Initialiser le diagramme lors du chargement du module
+if (!diagram) {
+    initializeDiagram("myDiagramDiv");
 }
 
 // Exportation des fonctions
